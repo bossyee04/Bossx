@@ -308,7 +308,7 @@
 
         .log-terminal {
             background: #121212;
-            color: #e0e0ff;
+            color: #0f0; /* ✅ WARNA HIJAU */
             font-family: 'Courier New', monospace;
             padding: 15px;
             border-radius: 8px;
@@ -471,13 +471,13 @@
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.0000000000 BossX</p>
                     <small id="reward-countdown">Auto-claim in: --</small>
-                    <button class="btn" disabled>Convert to USDT</button>
+                    <button class="btn" id="convert-btn" disabled>Convert to USDT</button>
                 </div>
 
                 <!-- Balance USDT -->
                 <div class="card">
                     <h3>Balance USDT</h3>
-                    <p>0.00 USDT</p>
+                    <p id="balance-usdt">0.00 USDT</p>
                 </div>
             </div>
 
@@ -501,7 +501,7 @@
                         </svg>
                         <input type="text" placeholder="Cari...">
                     </div>
-                    <table class="table">
+                    <table class="table" id="history-table">
                         <thead>
                             <tr>
                                 <th>Hari</th>
@@ -512,27 +512,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Sabtu</td>
-                                <td>14 Sep 2025</td>
-                                <td>12:30</td>
-                                <td>0.0000000001 BossX</td>
-                                <td>✅</td>
-                            </tr>
-                            <tr>
-                                <td>Jumat</td>
-                                <td>13 Sep 2025</td>
-                                <td>11:45</td>
-                                <td>0.0000000002 BossX</td>
-                                <td>✅</td>
-                            </tr>
-                            <tr>
-                                <td>Kamis</td>
-                                <td>12 Sep 2025</td>
-                                <td>10:20</td>
-                                <td>0.0000000003 BossX</td>
-                                <td>✅</td>
-                            </tr>
+                            <!-- Data akan diisi otomatis -->
                         </tbody>
                     </table>
                 </div>
@@ -588,7 +568,9 @@
             let rewardInterval;
             let countdownInterval;
             let autoclaimInterval;
-            let totalReward = 0;
+            let totalReward = 0; // Validasi Running
+            let rewardBalance = 0; // Reward Validasi
+            let usdtBalance = 0; // Balance USDT
             let isAutoScrollEnabled = true;
 
             const config = {
@@ -602,7 +584,8 @@
                 maxTemp: 85,
                 fanSpeed: 75,
                 sharesPerMinute: 1.5,
-                nextPayout: 0.0165
+                nextPayout: 0.0165,
+                bossxToUsdt: 0.8421 // 1 BossX = $0.8421
             };
 
             // Fungsi untuk menambahkan log
@@ -633,6 +616,7 @@
             const activateBtn = document.getElementById('activate-btn');
             const nodeAmountText = document.getElementById('node-amount');
             const powerBtn = document.getElementById('power-btn');
+            const convertBtn = document.getElementById('convert-btn');
 
             bossxInput.addEventListener('input', function() {
                 let value = parseFloat(this.value) || 0;
@@ -653,8 +637,8 @@
                 const value = parseFloat(bossxInput.value);
                 if (value >= 10) {
                     isNodeActivated = true;
-                    activateBtn.disabled = true; // ❌ Tidak bisa diaktivasi lagi
-                    bossxInput.disabled = true; // ❌ Input juga di-disable
+                    activateBtn.disabled = true;
+                    bossxInput.disabled = true;
                     powerBtn.classList.add('active');
                     powerBtn.title = "";
                     powerBtn.style.cursor = "pointer";
@@ -667,7 +651,7 @@
 
             // Power On/Off
             powerBtn.addEventListener('click', function() {
-                if (!isNodeActivated) return; // ❌ Jika belum aktivasi, tidak bisa klik
+                if (!isNodeActivated) return;
 
                 if (isMining) {
                     stopValidation("User menghentikan validasi");
@@ -682,11 +666,7 @@
 
                 addLog("Validasi RUNNING starting ON...");
 
-                // Reset reward
-                totalReward = 0;
-                document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
-
-                // Mulai tambah reward tiap detik (hanya jika mining aktif)
+                // Mulai tambah reward tiap detik
                 rewardInterval = setInterval(() => {
                     if (isMining) {
                         totalReward += 0.0000000001;
@@ -709,7 +689,23 @@
 
                     if (autoclaimTimer <= 0) {
                         autoclaimTimer = 60;
-                        document.getElementById('reward-validasi').textContent = totalReward.toFixed(10) + " BossX";
+                        
+                        // Pindahkan reward ke Reward Validasi
+                        rewardBalance += totalReward;
+                        totalReward = 0;
+                        
+                        // Update tampilan
+                        document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
+                        document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(10) + " BossX";
+                        
+                        // Aktifkan tombol Convert jika ≥ 1
+                        if (rewardBalance >= 1) {
+                            convertBtn.disabled = false;
+                        }
+
+                        // Tambahkan ke history
+                        addHistoryRow(rewardBalance);
+
                         addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
                     }
                 }, 1000);
@@ -733,6 +729,41 @@
                 isMining = true;
                 powerBtn.textContent = "⏹";
             }
+
+            // Tambahkan baris ke history
+            function addHistoryRow(amount) {
+                const now = new Date();
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const dayName = days[now.getDay()];
+                const date = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
+                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dayName}</td>
+                    <td>${date}</td>
+                    <td>${time}</td>
+                    <td>${amount.toFixed(10)} BossX</td>
+                    <td>✅</td>
+                `;
+
+                document.getElementById('history-table').prepend(row);
+            }
+
+            // Convert to USDT
+            convertBtn.addEventListener('click', function() {
+                if (rewardBalance >= 1) {
+                    const usdtAmount = rewardBalance * config.bossxToUsdt;
+                    usdtBalance += usdtAmount;
+                    rewardBalance = 0;
+
+                    document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
+                    document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
+                    convertBtn.disabled = true;
+
+                    addLog(`Convert berhasil: ${rewardBalance.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
+                }
+            });
 
             // Hitung mundur ke jam 06:00
             function startCountdown() {
@@ -773,8 +804,6 @@
                 isMining = false;
                 totalReward = 0;
                 document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
-                document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
-                document.getElementById('validasi-running-status').textContent = "Belum berjalan";
                 document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
                 powerBtn.textContent = "⏻";
             }
