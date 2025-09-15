@@ -300,17 +300,18 @@
         }
 
         .log-terminal {
-            background: #000;
-            color: #0f0;
-            font-family: monospace;
+            background: #121212;
+            color: #e0e0ff;
+            font-family: 'Courier New', monospace;
             padding: 15px;
             border-radius: 8px;
-            max-height: 180px;
+            max-height: 200px;
             overflow-y: auto;
             border: 1px solid #FFD700;
             margin-top: 10px;
             font-size: 14px;
             line-height: 1.5;
+            white-space: pre-wrap;
         }
 
         /* === HISTORY CARD === */
@@ -454,7 +455,7 @@
                     <h3>Validasi Running (Estimasi)</h3>
                     <p id="validasi-running">0.0000000000 BossX</p>
                     <small>Belum berjalan</small>
-                    <div class="power-btn">⏻</div>
+                    <div class="power-btn" onclick="startMining()">⏻</div>
                 </div>
 
                 <!-- Reward Validasi -->
@@ -477,13 +478,11 @@
                 <!-- Log Engine Reward -->
                 <div class="log-card">
                     <h3>Log Engine Reward</h3>
-                    <div class="log-terminal">
-                        [12.43.41] ⏳ Log Engine Reward siap. Aktivasi paket & klik ON untuk memulai...<br>
-                        [12.43.42] ✅ Paket aktivasi berhasil terkirim ke node.<br>
-                        [12.43.45] 🔄 Node sedang memproses validasi...<br>
-                        [12.43.50] 🎉 Reward diproses: 0.0000000001 BossX<br>
-                        [12.43.55] 🔁 Auto-claim aktif dalam 60 detik...<br>
-                        [12.44.00] 💰 Reward berhasil diklaim: 0.0000000002 BossX
+                    <div class="log-terminal" id="log-output">
+                        <!-- Log akan muncul di sini -->
+                    </div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="btn" id="power-btn" onclick="startMining()">Power On</button>
                     </div>
                 </div>
 
@@ -586,7 +585,6 @@
                 let value = parseFloat(this.value) || 0;
                 if (isNaN(value)) value = 0;
 
-                // Format ke 10 desimal
                 const formattedValue = value.toFixed(10);
                 nodeAmountText.textContent = `${formattedValue} BossX`;
 
@@ -601,11 +599,118 @@
                 const value = parseFloat(bossxInput.value);
                 if (value >= 10) {
                     alert(`Validasi berhasil diaktivasi dengan ${value.toFixed(10)} BossX!`);
+                    onNodeActivated(value);
                     bossxInput.value = '';
                     activateBtn.disabled = true;
                     nodeAmountText.textContent = '0.0000000000 BossX';
                 }
             });
+
+            // === LOG ENGINE REWARD ===
+            let logInterval;
+            let autoClaimInterval;
+            let isMining = false;
+            let isAutoScrollEnabled = true;
+
+            const config = {
+                pool: "slushpool.com",
+                currency: "BossX",
+                difficulty: 12000,
+                rewardPerShare: 0.00347,
+                minHashrate: 45,
+                maxHashrate: 48,
+                minTemp: 60,
+                maxTemp: 85,
+                fanSpeed: 75,
+                sharesPerMinute: 1.5,
+                nextPayout: 0.0165
+            };
+
+            function addLog(message, level = "INFO") {
+                const logOutput = document.getElementById('log-output');
+                const now = new Date();
+                const timestamp = `[${now.toISOString().slice(0, 19).replace('T', ' ')}]`;
+                const fullLog = `${timestamp} [${level}] ${message}`;
+
+                logOutput.innerHTML += `<br>${fullLog}`;
+
+                const lineCount = logOutput.innerHTML.split('<br>').length;
+
+                if (lineCount >= 25) {
+                    isAutoScrollEnabled = false;
+                }
+
+                if (isAutoScrollEnabled) {
+                    logOutput.scrollTop = logOutput.scrollHeight;
+                }
+            }
+
+            document.getElementById('log-output').addEventListener('scroll', function() {
+                const logOutput = this;
+                const isAtBottom = logOutput.scrollHeight - logOutput.scrollTop <= logOutput.clientHeight + 5;
+                isAutoScrollEnabled = isAtBottom;
+            });
+
+            function isMaintenanceTime() {
+                const now = new Date();
+                return now.getHours() === 6 && now.getMinutes() === 0;
+            }
+
+            function stopMining(reason = "Sistem maintenance") {
+                if (!isMining) return;
+
+                clearInterval(logInterval);
+                clearInterval(autoClaimInterval);
+                isMining = false;
+
+                addLog(`${reason} — Log engine dihentikan sementara.`, "ALERT");
+                document.getElementById('power-btn').disabled = false;
+            }
+
+            function onNodeActivated(amount) {
+                addLog(`Pembelian node BFGMiner dengan sejumlah ${amount.toFixed(10)} BossX - Status: Aktif`);
+            }
+
+            function startMining() {
+                if (isMining) return;
+
+                addLog("Validasi RUNNING starting ON...");
+                isAutoScrollEnabled = true;
+
+                logInterval = setInterval(() => {
+                    if (isMaintenanceTime()) {
+                        stopMining("Maintenance harian dimulai");
+                        return;
+                    }
+
+                    const messages = [
+                        () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
+                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: ${config.rewardPerShare.toFixed(6)} ${config.currency}`,
+                        () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${parseFloat((Math.random() * 0.0000001 + 0.00347).toFixed(8))} ${config.currency}`,
+                        () => `Uptime: 00:00:${Math.floor(Date.now() / 1000 % 60)} | Shares/min: ${parseFloat((Math.random() * 2 + 1.5).toFixed(1))} | Next payout: ${parseFloat((Math.random() * 0.0001 + 0.016).toFixed(6))} ${config.currency}`,
+                        () => `High temp on GPU#0: ${Math.floor(Math.random() * 15) + 75}°C | Fan: ${Math.floor(Math.random() * 20) + 80}%`,
+                        () => `Invalid share #${Math.floor(Math.random() * 1000000) + 2345100} on GPU#0 - Nonce mismatch`,
+                        () => `Network latency spike (${Math.floor(Math.random() * 200) + 100}ms). Monitoring...`
+                    ];
+
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)]();
+                    addLog(randomMessage);
+                }, 2000);
+
+                autoClaimInterval = setInterval(() => {
+                    if (!isMining) return;
+                    addLog("Auto-claim aktif — menunggu trigger dari sistem...", "STATUS");
+                }, 60000);
+
+                isMining = true;
+                document.getElementById('power-btn').disabled = true;
+
+                setInterval(() => {
+                    if (isMining && isMaintenanceTime()) {
+                        stopMining("Maintenance harian dimulai");
+                    }
+                }, 1000);
+            }
         });
     </script>
 </body>
