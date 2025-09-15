@@ -234,6 +234,7 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 10px;
+            word-break: break-all;
         }
 
         .card small {
@@ -242,8 +243,8 @@
         }
 
         .btn {
-            background: #FFD700;
-            color: #000;
+            background: #666;
+            color: #fff;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
@@ -251,9 +252,15 @@
             cursor: pointer;
             margin-top: 10px;
             transition: all 0.3s ease;
+            width: 100%;
         }
 
-        .btn:hover {
+        .btn:enabled {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .btn:hover:enabled {
             background: #FFC107;
             transform: scale(1.05);
         }
@@ -270,6 +277,7 @@
             cursor: pointer;
             margin-top: 10px;
             transition: all 0.3s ease;
+            font-size: 18px;
         }
 
         .power-btn:hover {
@@ -277,7 +285,7 @@
         }
 
         /* === LOG CARD === */
-        .log-card {
+        .log-card, .history-card {
             background: #1a002e;
             border: 2px solid #FFD700;
             border-radius: 12px;
@@ -285,7 +293,7 @@
             margin-bottom: 20px;
         }
 
-        .log-card h3 {
+        .log-card h3, .history-card h3 {
             color: #FFD700;
             margin-bottom: 15px;
             font-size: 18px;
@@ -297,26 +305,15 @@
             font-family: monospace;
             padding: 15px;
             border-radius: 8px;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid #FFD700;
             margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         /* === HISTORY CARD === */
-        .history-card {
-            background: #1a002e;
-            border: 2px solid #FFD700;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .history-card h3 {
-            color: #FFD700;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
         .search-bar {
             display: flex;
             margin-bottom: 15px;
@@ -341,6 +338,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            font-size: 14px;
         }
 
         .table th {
@@ -348,7 +346,6 @@
             color: #000;
             padding: 10px;
             text-align: left;
-            font-size: 14px;
         }
 
         .table td {
@@ -444,15 +441,18 @@
                 <!-- Node Amount -->
                 <div class="card">
                     <h3>Node Amount</h3>
-                    <p>0 BossX</p>
+                    <p id="node-amount">0.0000000000 BossX</p>
                     <small>minimal 10 BossX</small>
-                    <button class="btn">Aktivkan Masternode</button>
+                    <div style="margin-top: 10px;">
+                        <input type="number" id="bossx-input" placeholder="Masukkan jumlah BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
+                    </div>
+                    <button class="btn" id="activate-btn" disabled>Aktivkan Validasi</button>
                 </div>
 
                 <!-- Validasi Running -->
                 <div class="card">
                     <h3>Validasi Running (Estimasi)</h3>
-                    <p>0.00000000 BossX</p>
+                    <p id="validasi-running">0.0000000000 BossX</p>
                     <small>Belum berjalan</small>
                     <div class="power-btn">⏻</div>
                 </div>
@@ -460,7 +460,7 @@
                 <!-- Reward Validasi -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
-                    <p>0.00000000 BossX</p>
+                    <p id="reward-validasi">0.0000000000 BossX</p>
                     <small>Auto-claim: 60s</small>
                     <button class="btn">Convert to USDT</button>
                 </div>
@@ -473,14 +473,21 @@
             </div>
 
             <!-- 2 CARD DI BAWAH -->
-            <div class="dashboard-section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Log Engine Reward -->
                 <div class="log-card">
                     <h3>Log Engine Reward</h3>
                     <div class="log-terminal">
-                        [12.43.41] ⏳ Log Engine Reward siap. Aktivasi paket & klik ON untuk memulai...
+                        [12.43.41] ⏳ Log Engine Reward siap. Aktivasi paket & klik ON untuk memulai...<br>
+                        [12.43.42] ✅ Paket aktivasi berhasil terkirim ke node.<br>
+                        [12.43.45] 🔄 Node sedang memproses validasi...<br>
+                        [12.43.50] 🎉 Reward diproses: 0.0000000001 BossX<br>
+                        [12.43.55] 🔁 Auto-claim aktif dalam 60 detik...<br>
+                        [12.44.00] 💰 Reward berhasil diklaim: 0.0000000002 BossX
                     </div>
                 </div>
 
+                <!-- History Validasi -->
                 <div class="history-card">
                     <h3>History Validasi</h3>
                     <div class="search-bar">
@@ -505,14 +512,21 @@
                                 <td>Sabtu</td>
                                 <td>14 Sep 2025</td>
                                 <td>12:30</td>
-                                <td>0.00000001 BossX</td>
+                                <td>0.0000000001 BossX</td>
                                 <td>✅</td>
                             </tr>
                             <tr>
                                 <td>Jumat</td>
                                 <td>13 Sep 2025</td>
                                 <td>11:45</td>
-                                <td>0.00000002 BossX</td>
+                                <td>0.0000000002 BossX</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Kamis</td>
+                                <td>12 Sep 2025</td>
+                                <td>10:20</td>
+                                <td>0.0000000003 BossX</td>
                                 <td>✅</td>
                             </tr>
                         </tbody>
@@ -561,6 +575,36 @@
             toggleBtn.addEventListener('click', function() {
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('sidebar-collapsed');
+            });
+
+            // Validasi input node amount
+            const bossxInput = document.getElementById('bossx-input');
+            const activateBtn = document.getElementById('activate-btn');
+            const nodeAmountText = document.getElementById('node-amount');
+
+            bossxInput.addEventListener('input', function() {
+                let value = parseFloat(this.value) || 0;
+                if (isNaN(value)) value = 0;
+
+                // Format ke 10 desimal
+                const formattedValue = value.toFixed(10);
+                nodeAmountText.textContent = `${formattedValue} BossX`;
+
+                if (value >= 10) {
+                    activateBtn.disabled = false;
+                } else {
+                    activateBtn.disabled = true;
+                }
+            });
+
+            activateBtn.addEventListener('click', function() {
+                const value = parseFloat(bossxInput.value);
+                if (value >= 10) {
+                    alert(`Validasi berhasil diaktivasi dengan ${value.toFixed(10)} BossX!`);
+                    bossxInput.value = '';
+                    activateBtn.disabled = true;
+                    nodeAmountText.textContent = '0.0000000000 BossX';
+                }
             });
         });
     </script>
