@@ -265,11 +265,10 @@
             transform: scale(1.05);
         }
 
-        .power-btn {
-            background: #333;
-            color: #fff;
-            width: 40px;
-            height: 40px;
+        /* === ENGINE BUTTON === */
+        .engine-btn {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -277,22 +276,40 @@
             cursor: not-allowed;
             margin-top: 10px;
             transition: all 0.3s ease;
-            font-size: 18px;
-            opacity: 0.5;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #555;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            background: #333;
+            color: #fff;
+            opacity: 0.6;
         }
 
-        .power-btn.active {
+        .engine-btn.active {
             cursor: pointer;
             opacity: 1;
-            background: #555;
         }
 
-        .power-btn.active:hover {
-            background: #777;
+        .engine-btn.off {
+            background: #d93025;
+            border-color: #ff4c4c;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            color: #fff;
+        }
+
+        .engine-btn.on {
+            background: #34a853;
+            border-color: #4ade80;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+            color: #fff;
+        }
+
+        .engine-btn:hover {
+            transform: scale(1.1);
         }
 
         /* === LOG CARD === */
-        .log-card, .history-card {
+        .log-card, .history-card, .activation-card {
             background: #1a002e;
             border: 2px solid #FFD700;
             border-radius: 12px;
@@ -300,7 +317,7 @@
             margin-bottom: 20px;
         }
 
-        .log-card h3, .history-card h3 {
+        .log-card h3, .history-card h3, .activation-card h3 {
             color: #FFD700;
             margin-bottom: 15px;
             font-size: 18px;
@@ -308,7 +325,7 @@
 
         .log-terminal {
             background: #121212;
-            color: #0f0; /* ✅ WARNA HIJAU */
+            color: #0f0;
             font-family: 'Courier New', monospace;
             padding: 15px;
             border-radius: 8px;
@@ -391,7 +408,7 @@
             .card-grid {
                 grid-template-columns: 1fr;
             }
-            .log-card, .history-card {
+            .log-card, .history-card, .activation-card {
                 width: 100%;
             }
             .table {
@@ -439,7 +456,7 @@
         <!-- RUNNING TEXT -->
         <div class="running-text">
             <div class="content">
-                🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $0.8421 ▲ 3.2% (Live) | 🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $0.8421 ▲ 3.2% (Live)
+                🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $1.00 ▲ 0.0% (Live) | 🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $1.00 ▲ 0.0% (Live)
             </div>
         </div>
 
@@ -447,11 +464,10 @@
         <div class="dashboard-content">
             <!-- 4 CARD HORIZONTAL -->
             <div class="card-grid">
-                <!-- Balance BossX -->
+                <!-- Aktivasi Node -->
                 <div class="card">
-                    <h3>Balance BossX</h3>
+                    <h3>Aktivasi Node</h3>
                     <p id="node-amount">0.0000000000 BossX</p>
-                    <small>minimal 10 BossX</small>
                     <div style="margin-top: 10px;">
                         <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
@@ -463,7 +479,7 @@
                     <h3>Validasi Running (Estimasi)</h3>
                     <p id="validasi-running">0.0000000000 BossX</p>
                     <small id="validasi-running-status">Belum berjalan</small>
-                    <div class="power-btn" id="power-btn" title="Aktivasi dulu di Balance BossX">⏻</div>
+                    <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
                 <!-- Reward Validasi -->
@@ -481,7 +497,7 @@
                 </div>
             </div>
 
-            <!-- 2 CARD DI BAWAH -->
+            <!-- 3 CARD DI BAWAH -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <!-- Log Engine Reward -->
                 <div class="log-card">
@@ -516,6 +532,29 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- History Aktivasi -->
+            <div class="activation-card">
+                <h3>History Aktivasi</h3>
+                <table class="table" id="activation-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Tanggal</th>
+                            <th>Bulan</th>
+                            <th>Tahun</th>
+                            <th>Jam</th>
+                            <th>Menit</th>
+                            <th>Detik</th>
+                            <th>Jumlah</th>
+                            <th>Masa Akhir Kontrak</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan diisi otomatis -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -585,7 +624,7 @@
                 fanSpeed: 75,
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
-                bossxToUsdt: 0.8421 // 1 BossX = $0.8421
+                bossxToUsdt: 1.00 // ✅ 1 BossX = 1 USDT
             };
 
             // Fungsi untuk menambahkan log
@@ -640,12 +679,15 @@
                     activateBtn.disabled = true;
                     bossxInput.disabled = true;
                     powerBtn.classList.add('active');
+                    powerBtn.classList.add('off');
                     powerBtn.title = "";
-                    powerBtn.style.cursor = "pointer";
-                    powerBtn.style.opacity = "1";
+                    powerBtn.textContent = "⚫";
 
                     addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(10)} BossX - Status: Aktif`);
                     nodeAmountText.textContent = `${value.toFixed(10)} BossX`;
+
+                    // Tambahkan ke History Aktivasi
+                    addActivationRow(value);
                 }
             });
 
@@ -655,8 +697,14 @@
 
                 if (isMining) {
                     stopValidation("User menghentikan validasi");
+                    powerBtn.classList.remove('on');
+                    powerBtn.classList.add('off');
+                    powerBtn.textContent = "⚫";
                 } else {
                     startValidation();
+                    powerBtn.classList.remove('off');
+                    powerBtn.classList.add('on');
+                    powerBtn.textContent = "⚪";
                 }
             });
 
@@ -727,10 +775,9 @@
                 startCountdown();
 
                 isMining = true;
-                powerBtn.textContent = "⏹";
             }
 
-            // Tambahkan baris ke history
+            // Tambahkan baris ke history validasi
             function addHistoryRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -748,6 +795,33 @@
                 `;
 
                 document.getElementById('history-table').prepend(row);
+            }
+
+            // Tambahkan baris ke history aktivasi
+            function addActivationRow(amount) {
+                const now = new Date();
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                
+                // Masa akhir kontrak: 30 hari dari sekarang
+                const endDate = new Date(now);
+                endDate.setDate(endDate.getDate() + 30);
+                const endDateString = `${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${days[now.getDay()]}</td>
+                    <td>${now.getDate()}</td>
+                    <td>${months[now.getMonth()]}</td>
+                    <td>${now.getFullYear()}</td>
+                    <td>${String(now.getHours()).padStart(2, '0')}</td>
+                    <td>${String(now.getMinutes()).padStart(2, '0')}</td>
+                    <td>${String(now.getSeconds()).padStart(2, '0')}</td>
+                    <td>${amount.toFixed(10)} BossX</td>
+                    <td>${endDateString}</td>
+                `;
+
+                document.getElementById('activation-table').prepend(row);
             }
 
             // Convert to USDT
@@ -788,6 +862,9 @@
 
                     if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
                         stopValidation("Maintenance harian dimulai");
+                        powerBtn.classList.remove('on');
+                        powerBtn.classList.add('off');
+                        powerBtn.textContent = "⚫";
                     }
                 }, 1000);
             }
@@ -805,7 +882,6 @@
                 totalReward = 0;
                 document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
                 document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
-                powerBtn.textContent = "⏻";
             }
         });
     </script>
