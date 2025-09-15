@@ -35,7 +35,6 @@
             z-index: 100;
             backdrop-filter: blur(10px);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .logo-container {
@@ -50,12 +49,6 @@
             height: 60px;
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05) rotate(10deg);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
         }
 
         .brand {
@@ -86,19 +79,6 @@
             font-size: 16px;
             border-radius: 12px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .menu a:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: transparent;
-            transition: all 0.3s ease;
         }
 
         .menu a:hover {
@@ -107,34 +87,10 @@
             transform: translateX(5px);
         }
 
-        .menu a:hover:before {
-            background: linear-gradient(to bottom, #ffcc00, #ff9900);
-        }
-
         .menu a.active {
             color: #ffffff;
             background: rgba(255, 204, 0, 0.15);
             border-left: 4px solid #ffcc00;
-        }
-
-        .menu a:after {
-            content: attr(data-title);
-            position: absolute;
-            right: -100%;
-            top: 0;
-            padding: 16px 24px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            pointer-events: none;
-            font-size: 14px;
-        }
-
-        .menu a:hover:after {
-            right: 120%;
-            opacity: 1;
         }
 
         /* === MAIN CONTENT === */
@@ -143,7 +99,6 @@
             width: calc(100% - 280px);
             min-height: 100vh;
             background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             display: flex;
             flex-direction: column;
         }
@@ -160,17 +115,8 @@
         }
 
         .datetime {
-            text-align: left;
             font-size: 14px;
-            font-weight: 500;
             color: #ccccff;
-            line-height: 1.4;
-        }
-
-        .datetime .date {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
         }
 
         .profile-container {
@@ -185,181 +131,22 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #ffcc00;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
-            transition: transform 0.3s ease;
         }
 
-        .profile-pic:hover {
-            transform: scale(1.05);
-        }
-
-        .profile-info {
-            text-align: left;
-        }
-
-        .profile-info .username {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
+        .profile-info .username,
         .profile-info .validator-id {
-            font-size: 13px;
-            color: #a0a0d0;
-            margin-top: 2px;
+            font-size: 14px;
         }
 
-        /* === DASHBOARD CONTENT AREA === */
+        /* === DASHBOARD CONTENT AREA — KOSONG STRUKTUR SAJA === */
         .dashboard-content {
             padding: 40px;
             flex: 1;
         }
 
-        .dashboard-content h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 30px;
-            background: linear-gradient(to right, #ffffff, #ccccff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Stat Cards */
-        .stat-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+        /* Hanya beri container kosong — tanpa isi, tanpa placeholder */
+        .dashboard-section {
             margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 18px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
-        }
-
-        .stat-card h3 {
-            font-size: 16px;
-            color: #a0a0d0;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #ffcc00;
-            margin-bottom: 5px;
-        }
-
-        .stat-card .trend {
-            font-size: 13px;
-            color: #66ff99;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Charts & Tables Section */
-        .section {
-            background: rgba(20, 20, 40, 0.4);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .section-header h2 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .section-header a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .section-header a:hover {
-            color: #ff9900;
-        }
-
-        /* Placeholder Grafik */
-        .chart-placeholder {
-            width: 100%;
-            height: 300px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #a0a0d0;
-            font-size: 16px;
-            border: 1px dashed #555;
-        }
-
-        /* Tabel Aktivitas */
-        .activity-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .activity-table th,
-        .activity-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .activity-table th {
-            font-size: 14px;
-            font-weight: 600;
-            color: #a0a0d0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .activity-table td {
-            font-size: 15px;
-            color: #e0e0ff;
-        }
-
-        .status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status.success {
-            background: rgba(102, 255, 153, 0.15);
-            color: #66ff99;
-        }
-
-        .status.pending {
-            background: rgba(255, 204, 0, 0.15);
-            color: #ffcc00;
         }
 
         /* RESPONSIVE */
@@ -371,37 +158,15 @@
             .brand {
                 display: none;
             }
-            .menu a {
-                justify-content: center;
-                font-size: 20px;
-                padding: 16px;
-            }
             .main-content {
                 margin-left: 80px;
                 width: calc(100% - 80px);
             }
             .header-bar {
                 padding: 15px 20px;
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            .profile-container {
-                justify-content: flex-end;
-                width: 100%;
-            }
-            .profile-pic {
-                width: 50px;
-                height: 50px;
             }
             .dashboard-content {
                 padding: 20px;
-            }
-            .dashboard-content h1 {
-                font-size: 24px;
-            }
-            .stat-cards {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -429,8 +194,8 @@
         <!-- Header Bar -->
         <div class="header-bar">
             <div class="datetime">
-                <div class="date" id="current-date">Senin, 01 Januari 2024</div>
-                <div id="current-time">00:00:00</div>
+                <div id="current-date">Loading...</div>
+                <div id="current-time">--:--:--</div>
             </div>
             <div class="profile-container">
                 <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
@@ -441,70 +206,13 @@
             </div>
         </div>
 
-        <!-- DASHBOARD CONTENT -->
+        <!-- DASHBOARD CONTENT — KOSONG, SIAP ISI OLEH KAMU -->
         <div class="dashboard-content">
-            <h1>📊 Dashboard Overview</h1>
-
-            <!-- Statistik Ringkasan -->
-            <div class="stat-cards">
-                <div class="stat-card">
-                    <h3>Total Balance</h3>
-                    <div class="value">0.00 BOSSX</div>
-                    <div class="trend">↑ 0% from yesterday</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Masternode Active</h3>
-                    <div class="value">0</div>
-                    <div class="trend">↑ 0 nodes</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Deposit</h3>
-                    <div class="value">0.00 BOSSX</div>
-                    <div class="trend">— No activity</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Withdrawal</h3>
-                    <div class="value">0.00 BOSSX</div>
-                    <div class="trend">— No activity</div>
-                </div>
-            </div>
-
-            <!-- Grafik -->
-            <div class="section">
-                <div class="section-header">
-                    <h2>📈 Performance Chart</h2>
-                    <a href="#">View Details</a>
-                </div>
-                <div class="chart-placeholder">
-                    [Grafik akan ditampilkan di sini — sesuai materimu]
-                </div>
-            </div>
-
-            <!-- Tabel Aktivitas -->
-            <div class="section">
-                <div class="section-header">
-                    <h2>⏳ Recent Activity</h2>
-                    <a href="#">See All</a>
-                </div>
-                <table class="activity-table">
-                    <thead>
-                        <tr>
-                            <th>DATE</th>
-                            <th>TYPE</th>
-                            <th>AMOUNT</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td><span class="status pending">No Data</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- 
+                ⚠️ AREA INI KHUSUS UNTUKMU ISI SENDIRI
+                Tidak ada teks, tidak ada card, tidak ada tabel — hanya container kosong.
+                Kamu bisa mulai menulis <div>, <table>, <canvas>, dll di sini sesuai materimu.
+            -->
         </div>
     </div>
 
@@ -513,7 +221,6 @@
         function updateDateTime() {
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
             const now = new Date();
             const dayName = days[now.getDay()];
             const date = now.getDate();
@@ -530,7 +237,7 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Highlight menu
+        // Menu active toggle (tanpa mengubah konten)
         document.addEventListener('DOMContentLoaded', function () {
             const menuLinks = document.querySelectorAll('.menu a');
             menuLinks.forEach(link => {
@@ -538,7 +245,6 @@
                     e.preventDefault();
                     menuLinks.forEach(item => item.classList.remove('active'));
                     this.classList.add('active');
-                    document.querySelector('.dashboard-content h1').textContent = this.getAttribute('data-title');
                 });
             });
         });
