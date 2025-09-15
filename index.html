@@ -305,13 +305,14 @@
             font-family: 'Courier New', monospace;
             padding: 15px;
             border-radius: 8px;
-            max-height: 200px;
+            max-height: 400px; /* Tetap panjang */
             overflow-y: auto;
             border: 1px solid #FFD700;
             margin-top: 10px;
             font-size: 14px;
             line-height: 1.5;
             white-space: pre-wrap;
+            scroll-behavior: smooth; /* Smooth scroll */
         }
 
         /* === HISTORY CARD === */
@@ -481,7 +482,6 @@
                     <div class="log-terminal" id="log-output">
                         <!-- Log akan muncul di sini -->
                     </div>
-                    <!-- ❌ TOMBOL POWER ON DI BAWAH LOG DIHAPUS SESUAI PERMINTAAN -->
                 </div>
 
                 <!-- History Validasi -->
@@ -610,7 +610,7 @@
             let rewardInterval;
             let countdownInterval;
             let totalReward = 0;
-            let isAutoScrollEnabled = true;
+            let isAutoScrollEnabled = true; // ✅ Auto-scroll aktif sejak awal
 
             const config = {
                 pool: "slushpool.com",
@@ -634,14 +634,22 @@
                 const fullLog = `${timestamp} [${level}] ${message}`;
                 logOutput.innerHTML += `<br>${fullLog}`;
 
-                const lineCount = logOutput.innerHTML.split('<br>').length;
-                if (lineCount >= 25) {
-                    isAutoScrollEnabled = false;
-                }
+                // Jika auto-scroll aktif → scroll ke bawah
                 if (isAutoScrollEnabled) {
-                    logOutput.scrollTop = logOutput.scrollHeight;
+                    // Smooth scroll
+                    logOutput.scrollTo({
+                        top: logOutput.scrollHeight,
+                        behavior: 'smooth'
+                    });
                 }
             }
+
+            // Deteksi scroll manual user
+            document.getElementById('log-output').addEventListener('scroll', function() {
+                const logOutput = this;
+                const isAtBottom = logOutput.scrollHeight - logOutput.scrollTop <= logOutput.clientHeight + 10;
+                isAutoScrollEnabled = isAtBottom; // Auto-scroll aktif hanya jika di posisi bawah
+            });
 
             // Fungsi mulai validasi
             function startValidation() {
@@ -733,13 +741,6 @@
             function onNodeActivated(amount) {
                 addLog(`Pembelian node BFGMiner dengan sejumlah ${amount.toFixed(10)} BossX - Status: Aktif`);
             }
-
-            // Scroll behavior
-            document.getElementById('log-output').addEventListener('scroll', function() {
-                const logOutput = this;
-                const isAtBottom = logOutput.scrollHeight - logOutput.scrollTop <= logOutput.clientHeight + 5;
-                isAutoScrollEnabled = isAtBottom;
-            });
         });
     </script>
 </body>
