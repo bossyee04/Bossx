@@ -150,8 +150,8 @@
 
         .datetime #current-date,
         .datetime #current-time {
-            font-size: 18px; /* DIPERBESAR */
-            font-weight: 600; /* DITEBALKAN */
+            font-size: 18px;
+            font-weight: 600;
             color: #ffffff;
             letter-spacing: 0.5px;
         }
@@ -173,6 +173,31 @@
         .profile-info .username,
         .profile-info .validator-id {
             font-size: 14px;
+        }
+
+        /* === RUNNING TEXT === */
+        .running-text {
+            background: rgba(255, 204, 0, 0.1);
+            padding: 12px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 204, 0, 0.2);
+        }
+
+        .running-text .content {
+            display: inline-block;
+            color: #ffcc00;
+            font-weight: 600;
+            font-size: 16px;
+            animation: scrollText 25s linear infinite;
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+        }
+
+        @keyframes scrollText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
         /* === DASHBOARD CONTENT AREA — KOSONG STRUKTUR SAJA === */
@@ -200,6 +225,10 @@
             }
             .toggle-btn {
                 display: block;
+            }
+            .running-text .content {
+                font-size: 14px;
+                animation-duration: 20s;
             }
         }
     </style>
@@ -240,6 +269,13 @@
             </div>
         </div>
 
+        <!-- RUNNING TEXT -->
+        <div class="running-text">
+            <div class="content">
+                🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $0.8421 ▲ 3.2% (Live) | 🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $0.8421 ▲ 3.2% (Live)
+            </div>
+        </div>
+
         <!-- DASHBOARD CONTENT — KOSONG, SIAP ISI OLEH KAMU -->
         <div class="dashboard-content">
             <!-- 
@@ -271,7 +307,7 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Menu active toggle
+        // Menu active toggle + Sidebar toggle
         document.addEventListener('DOMContentLoaded', function () {
             const menuLinks = document.querySelectorAll('.menu a');
             menuLinks.forEach(link => {
@@ -282,7 +318,6 @@
                 });
             });
 
-            // Toggle Sidebar
             const toggleBtn = document.getElementById('toggle-sidebar');
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
