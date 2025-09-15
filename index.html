@@ -32,7 +32,8 @@
       backdrop-filter: blur(10px);
       color: white;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      z-index: 90;
+      z-index: 80; /* Di bawah sidebar */
+      position: relative;
     }
 
     .datetime {
@@ -44,16 +45,16 @@
     .user-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
     }
 
     .profile-pic {
-      width: 42px;
-      height: 42px;
+      width: 70px; /* SAMA DENGAN LOGO BOSSX */
+      height: 70px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #FF69B4;
-      box-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
+      border: 3px solid #FF69B4;
+      box-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
     }
 
     .user-details {
@@ -63,29 +64,29 @@
     }
 
     .username {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: 700;
+      font-size: 18px; /* DIPERBESAR */
       color: white;
     }
 
     .validator-id {
-      font-size: 12px;
+      font-size: 14px; /* DIPERBESAR */
       color: #FFB6C1;
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    /* Sidebar */
+    /* Sidebar — FULL HEIGHT & OVER HEADER */
     .sidebar {
       width: 260px;
-      height: calc(100vh - 60px); /* adjust for header */
+      height: 100vh; /* Full height from top */
       background: rgba(25, 25, 35, 0.92);
       backdrop-filter: blur(10px);
       color: white;
       transition: all 0.4s ease;
       position: fixed;
-      top: 60px; /* below header */
+      top: 0;
       left: 0;
-      z-index: 100;
+      z-index: 100; /* Di atas header */
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -98,7 +99,7 @@
     }
 
     .logo {
-      width: 70px;
+      width: 70px; /* Ukuran logo */
       height: auto;
       margin-right: 12px;
     }
@@ -145,12 +146,11 @@
       border-left: 4px solid #FF69B4;
     }
 
-    /* Main Content */
+    /* Main Content — adjust for sidebar & header */
     .main-content {
       flex: 1;
       margin-left: 260px;
-      margin-top: 60px; /* below header */
-      padding: 40px;
+      padding: 80px 40px 40px; /* Atas lebih besar karena header + sidebar tumpang tindih */
       color: white;
       transition: margin-left 0.4s ease;
     }
@@ -214,19 +214,7 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="datetime" id="datetime">Loading date & time...</div>
-    <div class="user-info">
-      <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
-      <div class="user-details">
-        <div class="username">Fery Muliawan</div>
-        <div class="validator-id">VALIDATOR ID: 8055x</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sidebar -->
+  <!-- Sidebar — sekarang full height & di atas header -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
@@ -238,6 +226,18 @@
       <div class="menu-item">Wallet</div>
       <div class="menu-item">Transactions</div>
       <div class="menu-item">Settings</div>
+    </div>
+  </div>
+
+  <!-- Header — tetap ada, tapi di bawah sidebar -->
+  <div class="header">
+    <div class="datetime" id="datetime">Loading date & time...</div>
+    <div class="user-info">
+      <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
+      <div class="user-details">
+        <div class="username">Fery Muliawan</div>
+        <div class="validator-id">VALIDATOR ID: 8055x</div>
+      </div>
     </div>
   </div>
 
