@@ -30,17 +30,48 @@
         .sidebar {
             width: 250px;
             background: #800080;
-            height: calc(100vh - 60px);
+            height: 100vh;
             transition: width 0.3s;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-sizing: border-box;
         }
 
         .sidebar.collapsed {
             width: 0;
         }
 
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 60px; /* diperbesar sesuai permintaan */
+            margin-bottom: 10px;
+        }
+
+        .coin-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+        }
+
         .sidebar-menu {
-            padding: 20px;
+            padding: 0 20px;
+        }
+
+        .sidebar-menu > div {
+            padding: 12px 0;
+            color: white;
+            cursor: pointer;
         }
 
         main {
@@ -56,19 +87,18 @@
             cursor: pointer;
             margin-right: 15px;
         }
-
-        .logo {
-            height: 40px; /* ukuran default sederhana */
-        }
     </style>
 </head>
 <body>
     <header>
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-        <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
     </header>
     <div class="container">
         <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
+                <div class="coin-name">BossX</div>
+            </div>
             <div class="sidebar-menu">
                 <div>Dashboard Masternode</div>
                 <div>Deposit</div>
