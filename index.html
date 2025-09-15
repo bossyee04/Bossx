@@ -454,8 +454,8 @@
                 <div class="card">
                     <h3>Validasi Running (Estimasi)</h3>
                     <p id="validasi-running">0.0000000000 BossX</p>
-                    <small>Belum berjalan</small>
-                    <div class="power-btn" onclick="startMining()">⏻</div>
+                    <small id="validasi-running-status">Belum berjalan</small>
+                    <div class="power-btn">⏻</div>
                 </div>
 
                 <!-- Reward Validasi -->
@@ -481,9 +481,7 @@
                     <div class="log-terminal" id="log-output">
                         <!-- Log akan muncul di sini -->
                     </div>
-                    <div style="margin-top: 15px; text-align: center;">
-                        <button class="btn" id="power-btn" onclick="startMining()">Power On</button>
-                    </div>
+                    <!-- ❌ TOMBOL POWER ON DI BAWAH LOG DIHAPUS SESUAI PERMINTAAN -->
                 </div>
 
                 <!-- History Validasi -->
@@ -606,10 +604,12 @@
                 }
             });
 
-            // === LOG ENGINE REWARD ===
-            let logInterval;
-            let autoClaimInterval;
+            // === LOG ENGINE + VALIDASI RUNNING SYSTEM ===
             let isMining = false;
+            let logInterval;
+            let rewardInterval;
+            let countdownInterval;
+            let totalReward = 0;
             let isAutoScrollEnabled = true;
 
             const config = {
@@ -626,91 +626,120 @@
                 nextPayout: 0.0165
             };
 
+            // Fungsi untuk menambahkan log
             function addLog(message, level = "INFO") {
                 const logOutput = document.getElementById('log-output');
                 const now = new Date();
                 const timestamp = `[${now.toISOString().slice(0, 19).replace('T', ' ')}]`;
                 const fullLog = `${timestamp} [${level}] ${message}`;
-
                 logOutput.innerHTML += `<br>${fullLog}`;
 
                 const lineCount = logOutput.innerHTML.split('<br>').length;
-
                 if (lineCount >= 25) {
                     isAutoScrollEnabled = false;
                 }
-
                 if (isAutoScrollEnabled) {
                     logOutput.scrollTop = logOutput.scrollHeight;
                 }
             }
 
+            // Fungsi mulai validasi
+            function startValidation() {
+                if (isMining) return;
+
+                addLog("Validasi RUNNING starting ON...");
+
+                // Mulai tambah reward tiap detik
+                rewardInterval = setInterval(() => {
+                    totalReward += 0.0000000001;
+                    document.getElementById('validasi-running').textContent = totalReward.toFixed(10) + " BossX";
+                    document.getElementById('reward-validasi').textContent = totalReward.toFixed(10) + " BossX";
+                }, 1000);
+
+                // Mulai log mining
+                logInterval = setInterval(() => {
+                    const messages = [
+                        () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
+                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: 0.0000000001 ${config.currency}`,
+                        () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${totalReward.toFixed(10)} ${config.currency}`,
+                        () => `High temp on GPU#0: ${Math.floor(Math.random() * 15) + 75}°C | Fan: ${Math.floor(Math.random() * 20) + 80}%`,
+                        () => `Network latency spike (${Math.floor(Math.random() * 200) + 100}ms). Monitoring...`
+                    ];
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)]();
+                    addLog(randomMessage);
+                }, 2000);
+
+                // Hitung mundur ke jam 06:00
+                startCountdown();
+
+                isMining = true;
+                document.querySelector('.power-btn').textContent = "⏹"; // Ganti icon jadi STOP
+            }
+
+            // Fungsi hitung mundur ke jam 06:00
+            function startCountdown() {
+                clearInterval(countdownInterval);
+
+                countdownInterval = setInterval(() => {
+                    const now = new Date();
+                    let target = new Date();
+                    target.setHours(6, 0, 0, 0);
+
+                    if (now > target) {
+                        target.setDate(target.getDate() + 1); // Besok jam 06:00
+                    }
+
+                    const diff = target - now;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    const countdownText = `Stop validasi jam 06:00 (${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')})`;
+                    document.getElementById('validasi-running-status').textContent = countdownText;
+
+                    // Jika sudah jam 06:00
+                    if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                        stopValidation("Maintenance harian dimulai");
+                    }
+                }, 1000);
+            }
+
+            // Fungsi hentikan validasi
+            function stopValidation(reason = "Sistem dimatikan") {
+                clearInterval(rewardInterval);
+                clearInterval(logInterval);
+                clearInterval(countdownInterval);
+
+                addLog(`${reason} — Validasi dihentikan.`, "ALERT");
+
+                isMining = false;
+                totalReward = 0;
+                document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
+                document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
+                document.getElementById('validasi-running-status').textContent = "Belum berjalan";
+                document.querySelector('.power-btn').textContent = "⏻"; // Kembali ke icon ON
+            }
+
+            // Event listener tombol ⏻
+            document.querySelector('.power-btn').addEventListener('click', function() {
+                if (isMining) {
+                    stopValidation("User menghentikan validasi");
+                } else {
+                    startValidation();
+                }
+            });
+
+            // Saat user aktivasi masternode
+            function onNodeActivated(amount) {
+                addLog(`Pembelian node BFGMiner dengan sejumlah ${amount.toFixed(10)} BossX - Status: Aktif`);
+            }
+
+            // Scroll behavior
             document.getElementById('log-output').addEventListener('scroll', function() {
                 const logOutput = this;
                 const isAtBottom = logOutput.scrollHeight - logOutput.scrollTop <= logOutput.clientHeight + 5;
                 isAutoScrollEnabled = isAtBottom;
             });
-
-            function isMaintenanceTime() {
-                const now = new Date();
-                return now.getHours() === 6 && now.getMinutes() === 0;
-            }
-
-            function stopMining(reason = "Sistem maintenance") {
-                if (!isMining) return;
-
-                clearInterval(logInterval);
-                clearInterval(autoClaimInterval);
-                isMining = false;
-
-                addLog(`${reason} — Log engine dihentikan sementara.`, "ALERT");
-                document.getElementById('power-btn').disabled = false;
-            }
-
-            function onNodeActivated(amount) {
-                addLog(`Pembelian node BFGMiner dengan sejumlah ${amount.toFixed(10)} BossX - Status: Aktif`);
-            }
-
-            function startMining() {
-                if (isMining) return;
-
-                addLog("Validasi RUNNING starting ON...");
-                isAutoScrollEnabled = true;
-
-                logInterval = setInterval(() => {
-                    if (isMaintenanceTime()) {
-                        stopMining("Maintenance harian dimulai");
-                        return;
-                    }
-
-                    const messages = [
-                        () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
-                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: ${config.rewardPerShare.toFixed(6)} ${config.currency}`,
-                        () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${parseFloat((Math.random() * 0.0000001 + 0.00347).toFixed(8))} ${config.currency}`,
-                        () => `Uptime: 00:00:${Math.floor(Date.now() / 1000 % 60)} | Shares/min: ${parseFloat((Math.random() * 2 + 1.5).toFixed(1))} | Next payout: ${parseFloat((Math.random() * 0.0001 + 0.016).toFixed(6))} ${config.currency}`,
-                        () => `High temp on GPU#0: ${Math.floor(Math.random() * 15) + 75}°C | Fan: ${Math.floor(Math.random() * 20) + 80}%`,
-                        () => `Invalid share #${Math.floor(Math.random() * 1000000) + 2345100} on GPU#0 - Nonce mismatch`,
-                        () => `Network latency spike (${Math.floor(Math.random() * 200) + 100}ms). Monitoring...`
-                    ];
-
-                    const randomMessage = messages[Math.floor(Math.random() * messages.length)]();
-                    addLog(randomMessage);
-                }, 2000);
-
-                autoClaimInterval = setInterval(() => {
-                    if (!isMining) return;
-                    addLog("Auto-claim aktif — menunggu trigger dari sistem...", "STATUS");
-                }, 60000);
-
-                isMining = true;
-                document.getElementById('power-btn').disabled = true;
-
-                setInterval(() => {
-                    if (isMining && isMaintenanceTime()) {
-                        stopMining("Maintenance harian dimulai");
-                    }
-                }, 1000);
-            }
         });
     </script>
 </body>
