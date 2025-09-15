@@ -274,14 +274,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            cursor: not-allowed;
             margin-top: 10px;
             transition: all 0.3s ease;
             font-size: 18px;
+            opacity: 0.5;
         }
 
-        .power-btn:hover {
+        .power-btn.active {
+            cursor: pointer;
+            opacity: 1;
             background: #555;
+        }
+
+        .power-btn.active:hover {
+            background: #777;
         }
 
         /* === LOG CARD === */
@@ -305,14 +312,14 @@
             font-family: 'Courier New', monospace;
             padding: 15px;
             border-radius: 8px;
-            max-height: 400px; /* Tetap panjang */
+            max-height: 400px;
             overflow-y: auto;
             border: 1px solid #FFD700;
             margin-top: 10px;
             font-size: 14px;
             line-height: 1.5;
             white-space: pre-wrap;
-            scroll-behavior: smooth; /* Smooth scroll */
+            scroll-behavior: smooth;
         }
 
         /* === HISTORY CARD === */
@@ -440,13 +447,13 @@
         <div class="dashboard-content">
             <!-- 4 CARD HORIZONTAL -->
             <div class="card-grid">
-                <!-- Node Amount -->
+                <!-- Balance BossX -->
                 <div class="card">
-                    <h3>Node Amount</h3>
+                    <h3>Balance BossX</h3>
                     <p id="node-amount">0.0000000000 BossX</p>
                     <small>minimal 10 BossX</small>
                     <div style="margin-top: 10px;">
-                        <input type="number" id="bossx-input" placeholder="Masukkan jumlah BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
+                        <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
                     <button class="btn" id="activate-btn" disabled>Aktivkan Validasi</button>
                 </div>
@@ -456,15 +463,15 @@
                     <h3>Validasi Running (Estimasi)</h3>
                     <p id="validasi-running">0.0000000000 BossX</p>
                     <small id="validasi-running-status">Belum berjalan</small>
-                    <div class="power-btn">⏻</div>
+                    <div class="power-btn" id="power-btn" title="Aktivasi dulu di Balance BossX">⏻</div>
                 </div>
 
                 <!-- Reward Validasi -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.0000000000 BossX</p>
-                    <small>Auto-claim: 60s</small>
-                    <button class="btn">Convert to USDT</button>
+                    <small id="reward-countdown">Auto-claim in: --</small>
+                    <button class="btn" disabled>Convert to USDT</button>
                 </div>
 
                 <!-- Balance USDT -->
@@ -574,43 +581,15 @@
                 mainContent.classList.toggle('sidebar-collapsed');
             });
 
-            // Validasi input node amount
-            const bossxInput = document.getElementById('bossx-input');
-            const activateBtn = document.getElementById('activate-btn');
-            const nodeAmountText = document.getElementById('node-amount');
-
-            bossxInput.addEventListener('input', function() {
-                let value = parseFloat(this.value) || 0;
-                if (isNaN(value)) value = 0;
-
-                const formattedValue = value.toFixed(10);
-                nodeAmountText.textContent = `${formattedValue} BossX`;
-
-                if (value >= 10) {
-                    activateBtn.disabled = false;
-                } else {
-                    activateBtn.disabled = true;
-                }
-            });
-
-            activateBtn.addEventListener('click', function() {
-                const value = parseFloat(bossxInput.value);
-                if (value >= 10) {
-                    alert(`Validasi berhasil diaktivasi dengan ${value.toFixed(10)} BossX!`);
-                    onNodeActivated(value);
-                    bossxInput.value = '';
-                    activateBtn.disabled = true;
-                    nodeAmountText.textContent = '0.0000000000 BossX';
-                }
-            });
-
-            // === LOG ENGINE + VALIDASI RUNNING SYSTEM ===
+            // State
+            let isNodeActivated = false;
             let isMining = false;
             let logInterval;
             let rewardInterval;
             let countdownInterval;
+            let autoclaimInterval;
             let totalReward = 0;
-            let isAutoScrollEnabled = true; // ✅ Auto-scroll aktif sejak awal
+            let isAutoScrollEnabled = true;
 
             const config = {
                 pool: "slushpool.com",
@@ -634,9 +613,7 @@
                 const fullLog = `${timestamp} [${level}] ${message}`;
                 logOutput.innerHTML += `<br>${fullLog}`;
 
-                // Jika auto-scroll aktif → scroll ke bawah
                 if (isAutoScrollEnabled) {
-                    // Smooth scroll
                     logOutput.scrollTo({
                         top: logOutput.scrollHeight,
                         behavior: 'smooth'
@@ -648,20 +625,93 @@
             document.getElementById('log-output').addEventListener('scroll', function() {
                 const logOutput = this;
                 const isAtBottom = logOutput.scrollHeight - logOutput.scrollTop <= logOutput.clientHeight + 10;
-                isAutoScrollEnabled = isAtBottom; // Auto-scroll aktif hanya jika di posisi bawah
+                isAutoScrollEnabled = isAtBottom;
             });
 
-            // Fungsi mulai validasi
+            // Validasi input balance
+            const bossxInput = document.getElementById('bossx-input');
+            const activateBtn = document.getElementById('activate-btn');
+            const nodeAmountText = document.getElementById('node-amount');
+            const powerBtn = document.getElementById('power-btn');
+
+            bossxInput.addEventListener('input', function() {
+                let value = parseFloat(this.value) || 0;
+                if (isNaN(value)) value = 0;
+
+                const formattedValue = value.toFixed(10);
+                nodeAmountText.textContent = `${formattedValue} BossX`;
+
+                if (value >= 10) {
+                    activateBtn.disabled = false;
+                } else {
+                    activateBtn.disabled = true;
+                }
+            });
+
+            // Aktivasi masternode
+            activateBtn.addEventListener('click', function() {
+                const value = parseFloat(bossxInput.value);
+                if (value >= 10) {
+                    isNodeActivated = true;
+                    activateBtn.disabled = true; // ❌ Tidak bisa diaktivasi lagi
+                    bossxInput.disabled = true; // ❌ Input juga di-disable
+                    powerBtn.classList.add('active');
+                    powerBtn.title = "";
+                    powerBtn.style.cursor = "pointer";
+                    powerBtn.style.opacity = "1";
+
+                    addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(10)} BossX - Status: Aktif`);
+                    nodeAmountText.textContent = `${value.toFixed(10)} BossX`;
+                }
+            });
+
+            // Power On/Off
+            powerBtn.addEventListener('click', function() {
+                if (!isNodeActivated) return; // ❌ Jika belum aktivasi, tidak bisa klik
+
+                if (isMining) {
+                    stopValidation("User menghentikan validasi");
+                } else {
+                    startValidation();
+                }
+            });
+
+            // Mulai validasi
             function startValidation() {
                 if (isMining) return;
 
                 addLog("Validasi RUNNING starting ON...");
 
-                // Mulai tambah reward tiap detik
+                // Reset reward
+                totalReward = 0;
+                document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
+
+                // Mulai tambah reward tiap detik (hanya jika mining aktif)
                 rewardInterval = setInterval(() => {
-                    totalReward += 0.0000000001;
-                    document.getElementById('validasi-running').textContent = totalReward.toFixed(10) + " BossX";
-                    document.getElementById('reward-validasi').textContent = totalReward.toFixed(10) + " BossX";
+                    if (isMining) {
+                        totalReward += 0.0000000001;
+                        document.getElementById('validasi-running').textContent = totalReward.toFixed(10) + " BossX";
+                    }
+                }, 1000);
+
+                // Auto-claim tiap 60 detik
+                let autoclaimTimer = 60;
+                document.getElementById('reward-countdown').textContent = `Auto-claim in: ${autoclaimTimer}s`;
+
+                autoclaimInterval = setInterval(() => {
+                    if (!isMining) {
+                        clearInterval(autoclaimInterval);
+                        return;
+                    }
+
+                    autoclaimTimer--;
+                    document.getElementById('reward-countdown').textContent = `Auto-claim in: ${autoclaimTimer}s`;
+
+                    if (autoclaimTimer <= 0) {
+                        autoclaimTimer = 60;
+                        document.getElementById('reward-validasi').textContent = totalReward.toFixed(10) + " BossX";
+                        addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
+                    }
                 }, 1000);
 
                 // Mulai log mining
@@ -681,10 +731,10 @@
                 startCountdown();
 
                 isMining = true;
-                document.querySelector('.power-btn').textContent = "⏹"; // Ganti icon jadi STOP
+                powerBtn.textContent = "⏹";
             }
 
-            // Fungsi hitung mundur ke jam 06:00
+            // Hitung mundur ke jam 06:00
             function startCountdown() {
                 clearInterval(countdownInterval);
 
@@ -694,7 +744,7 @@
                     target.setHours(6, 0, 0, 0);
 
                     if (now > target) {
-                        target.setDate(target.getDate() + 1); // Besok jam 06:00
+                        target.setDate(target.getDate() + 1);
                     }
 
                     const diff = target - now;
@@ -705,17 +755,17 @@
                     const countdownText = `Stop validasi jam 06:00 (${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')})`;
                     document.getElementById('validasi-running-status').textContent = countdownText;
 
-                    // Jika sudah jam 06:00
                     if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
                         stopValidation("Maintenance harian dimulai");
                     }
                 }, 1000);
             }
 
-            // Fungsi hentikan validasi
+            // Hentikan validasi
             function stopValidation(reason = "Sistem dimatikan") {
                 clearInterval(rewardInterval);
                 clearInterval(logInterval);
+                clearInterval(autoclaimInterval);
                 clearInterval(countdownInterval);
 
                 addLog(`${reason} — Validasi dihentikan.`, "ALERT");
@@ -725,21 +775,8 @@
                 document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
                 document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
                 document.getElementById('validasi-running-status').textContent = "Belum berjalan";
-                document.querySelector('.power-btn').textContent = "⏻"; // Kembali ke icon ON
-            }
-
-            // Event listener tombol ⏻
-            document.querySelector('.power-btn').addEventListener('click', function() {
-                if (isMining) {
-                    stopValidation("User menghentikan validasi");
-                } else {
-                    startValidation();
-                }
-            });
-
-            // Saat user aktivasi masternode
-            function onNodeActivated(amount) {
-                addLog(`Pembelian node BFGMiner dengan sejumlah ${amount.toFixed(10)} BossX - Status: Aktif`);
+                document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
+                powerBtn.textContent = "⏻";
             }
         });
     </script>
