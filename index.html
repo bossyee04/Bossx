@@ -46,8 +46,8 @@
         }
 
         .logo {
-            width: 50px;
-            height: 50px;
+            width: 60px; /* DIPERBESAR */
+            height: 60px; /* DIPERBESAR */
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -60,7 +60,7 @@
 
         .brand {
             margin-left: 15px;
-            font-size: 28px;
+            font-size: 32px; /* DIPERBESAR */
             font-weight: 700;
             background: linear-gradient(to right, #ffcc00, #ff9900);
             -webkit-background-clip: text;
@@ -151,7 +151,7 @@
         /* === HEADER BAR === */
         .header-bar {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
             background: rgba(15, 15, 26, 0.7);
@@ -159,9 +159,31 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Waktu Realtime (Kiri) */
+        .datetime {
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ccccff;
+            line-height: 1.4;
+        }
+
+        .datetime .date {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Profil User (Kanan) */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .profile-pic {
-            width: 42px;
-            height: 42px;
+            width: 60px; /* SAMA DENGAN LOGO */
+            height: 60px; /* SAMA DENGAN LOGO */
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #ffcc00;
@@ -173,6 +195,23 @@
             transform: scale(1.05);
         }
 
+        .profile-info {
+            text-align: left;
+        }
+
+        .profile-info .username {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .profile-info .validator-id {
+            font-size: 13px;
+            color: #a0a0d0;
+            margin-top: 2px;
+        }
+
+        /* === CONTENT AREA === */
         .content-area {
             padding: 40px;
             flex: 1;
@@ -261,10 +300,17 @@
             }
             .header-bar {
                 padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            .profile-container {
+                justify-content: flex-end;
+                width: 100%;
             }
             .profile-pic {
-                width: 36px;
-                height: 36px;
+                width: 50px;
+                height: 50px;
             }
             .content-area {
                 padding: 20px;
@@ -298,9 +344,22 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header Bar dengan Foto Profil -->
+        <!-- Header Bar -->
         <div class="header-bar">
-            <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
+            <!-- Waktu Realtime (Kiri) -->
+            <div class="datetime">
+                <div class="date" id="current-date">Senin, 01 Januari 2024</div>
+                <div id="current-time">00:00:00</div>
+            </div>
+
+            <!-- Profil User (Kanan) -->
+            <div class="profile-container">
+                <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
+                <div class="profile-info">
+                    <div class="username">Fery Muliawan</div>
+                    <div class="validator-id">Validator ID: 8055x</div>
+                </div>
+            </div>
         </div>
 
         <!-- Konten Utama -->
@@ -326,6 +385,28 @@
     </div>
 
     <script>
+        // === REALTIME CLOCK ===
+        function updateDateTime() {
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+            const now = new Date();
+            const dayName = days[now.getDay()];
+            const date = now.getDate();
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('current-date').textContent = `${dayName}, ${date} ${monthName} ${year}`;
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Update setiap detik
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Panggil langsung saat load
+
         // Highlight menu saat diklik
         document.addEventListener('DOMContentLoaded', function () {
             const menuLinks = document.querySelectorAll('.menu a');
