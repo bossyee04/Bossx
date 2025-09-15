@@ -624,7 +624,7 @@
                 fanSpeed: 75,
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
-                bossxToUsdt: 1.00 // ✅ 1 BossX = 1 USDT
+                bossxToUsdt: 1.00
             };
 
             // Fungsi untuk menambahkan log
@@ -686,26 +686,20 @@
                     addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(10)} BossX - Status: Aktif`);
                     nodeAmountText.textContent = `${value.toFixed(10)} BossX`;
 
-                    // Tambahkan ke History Aktivasi
                     addActivationRow(value);
                 }
             });
 
-            // Power On/Off
+            // ✅ REVISI UTAMA: USER TIDAK BISA MATIKAN MANUAL — HANYA BISA NYALAKAN
             powerBtn.addEventListener('click', function() {
+                // Hanya bisa dinyalakan, tidak bisa dimatikan manual
                 if (!isNodeActivated) return;
+                if (isMining) return; // ❌ Jika sudah nyala, tidak bisa diklik lagi untuk matikan
 
-                if (isMining) {
-                    stopValidation("User menghentikan validasi");
-                    powerBtn.classList.remove('on');
-                    powerBtn.classList.add('off');
-                    powerBtn.textContent = "⚫";
-                } else {
-                    startValidation();
-                    powerBtn.classList.remove('off');
-                    powerBtn.classList.add('on');
-                    powerBtn.textContent = "⚪";
-                }
+                startValidation();
+                powerBtn.classList.remove('off');
+                powerBtn.classList.add('on');
+                powerBtn.textContent = "⚪";
             });
 
             // Mulai validasi
@@ -714,7 +708,6 @@
 
                 addLog("Validasi RUNNING starting ON...");
 
-                // Mulai tambah reward tiap detik
                 rewardInterval = setInterval(() => {
                     if (isMining) {
                         totalReward += 0.0000000001;
@@ -722,7 +715,6 @@
                     }
                 }, 1000);
 
-                // Auto-claim tiap 60 detik
                 let autoclaimTimer = 60;
                 document.getElementById('reward-countdown').textContent = `Auto-claim in: ${autoclaimTimer}s`;
 
@@ -737,28 +729,18 @@
 
                     if (autoclaimTimer <= 0) {
                         autoclaimTimer = 60;
-                        
-                        // Pindahkan reward ke Reward Validasi
                         rewardBalance += totalReward;
                         totalReward = 0;
-                        
-                        // Update tampilan
                         document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
                         document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(10) + " BossX";
-                        
-                        // Aktifkan tombol Convert jika ≥ 1
                         if (rewardBalance >= 1) {
                             convertBtn.disabled = false;
                         }
-
-                        // Tambahkan ke history
                         addHistoryRow(rewardBalance);
-
                         addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
                     }
                 }, 1000);
 
-                // Mulai log mining
                 logInterval = setInterval(() => {
                     const messages = [
                         () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
@@ -771,9 +753,7 @@
                     addLog(randomMessage);
                 }, 2000);
 
-                // Hitung mundur ke jam 06:00
                 startCountdown();
-
                 isMining = true;
             }
 
@@ -802,8 +782,6 @@
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                
-                // Masa akhir kontrak: 30 hari dari sekarang
                 const endDate = new Date(now);
                 endDate.setDate(endDate.getDate() + 30);
                 const endDateString = `${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
@@ -830,16 +808,14 @@
                     const usdtAmount = rewardBalance * config.bossxToUsdt;
                     usdtBalance += usdtAmount;
                     rewardBalance = 0;
-
                     document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
                     document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
                     convertBtn.disabled = true;
-
                     addLog(`Convert berhasil: ${rewardBalance.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
                 }
             });
 
-            // Hitung mundur ke jam 06:00
+            // Hitung mundur ke jam 06:00 + MATIKAN OTOMATIS
             function startCountdown() {
                 clearInterval(countdownInterval);
 
@@ -860,23 +836,25 @@
                     const countdownText = `Stop validasi jam 06:00 (${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')})`;
                     document.getElementById('validasi-running-status').textContent = countdownText;
 
+                    // ✅ MATIKAN OTOMATIS JAM 06:00
                     if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-                        stopValidation("Maintenance harian dimulai");
+                        stopValidation("Maintenance harian dimulai — sistem mematikan validasi otomatis.");
                         powerBtn.classList.remove('on');
                         powerBtn.classList.add('off');
                         powerBtn.textContent = "⚫";
+                        isMining = false; // Penting!
                     }
                 }, 1000);
             }
 
-            // Hentikan validasi
+            // Hentikan validasi (hanya dipanggil oleh sistem)
             function stopValidation(reason = "Sistem dimatikan") {
                 clearInterval(rewardInterval);
                 clearInterval(logInterval);
                 clearInterval(autoclaimInterval);
                 clearInterval(countdownInterval);
 
-                addLog(`${reason} — Validasi dihentikan.`, "ALERT");
+                addLog(`${reason}`, "ALERT");
 
                 isMining = false;
                 totalReward = 0;
