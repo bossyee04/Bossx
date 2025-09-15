@@ -22,7 +22,7 @@
       overflow-x: hidden;
     }
 
-    /* Header */
+    /* Header — FIXED & DI ATAS SEMUA */
     .header {
       display: flex;
       justify-content: space-between;
@@ -32,8 +32,12 @@
       backdrop-filter: blur(10px);
       color: white;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      z-index: 80;
-      position: relative;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      z-index: 1000;
     }
 
     .datetime {
@@ -75,18 +79,18 @@
       font-weight: 600;
     }
 
-    /* Sidebar */
+    /* Sidebar — STARTS BELOW HEADER */
     .sidebar {
       width: 260px;
-      height: 100vh;
+      height: calc(100vh - 60px);
       background: rgba(25, 25, 35, 0.92);
       backdrop-filter: blur(10px);
       color: white;
       transition: all 0.4s ease;
       position: fixed;
-      top: 0;
+      top: 60px;
       left: 0;
-      z-index: 100;
+      z-index: 900;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -150,7 +154,8 @@
     .main-content {
       flex: 1;
       margin-left: 260px;
-      padding: 80px 40px 40px;
+      margin-top: 60px;
+      padding: 40px;
       color: white;
       transition: margin-left 0.4s ease;
     }
@@ -214,7 +219,19 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
+  <!-- Header — SEKARANG DI ATAS SEMUA -->
+  <div class="header">
+    <div class="datetime" id="datetime">Loading...</div>
+    <div class="user-info">
+      <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
+      <div class="user-details">
+        <div class="username">Fery Muliawan</div>
+        <div class="validator-id">VALIDATOR ID: 8055x</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar — STARTS FROM BELOW HEADER -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
@@ -229,18 +246,6 @@
     </div>
   </div>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="datetime" id="datetime">Loading...</div>
-    <div class="user-info">
-      <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
-      <div class="user-details">
-        <div class="username">Fery Muliawan</div>
-        <div class="validator-id">VALIDATOR ID: 8055x</div>
-      </div>
-    </div>
-  </div>
-
   <!-- Main Content -->
   <div class="main-content" id="mainContent">
     <h1>Welcome to BossX</h1>
@@ -248,7 +253,6 @@
   </div>
 
   <script>
-    // ✅ FUNGSI JAM REAL-TIME — FORMAT LENGKAP: "Hari, tanggal Bulan Tahun — jam:menit:detik"
     function updateDateTime() {
       const now = new Date();
       const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -262,15 +266,13 @@
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
 
-      // Format: "Senin, 5 April 2025 — 14:32:45"
       document.getElementById('datetime').textContent = 
         `${dayName}, ${date} ${monthName} ${year} — ${hours}:${minutes}:${seconds}`;
     }
 
     setInterval(updateDateTime, 1000);
-    updateDateTime(); // Tampilkan langsung saat halaman dibuka
+    updateDateTime();
 
-    // Toggle Sidebar
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.getElementById('toggleBtn');
       const sidebar = document.getElementById('sidebar');
