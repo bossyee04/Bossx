@@ -32,7 +32,7 @@
       backdrop-filter: blur(10px);
       color: white;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      z-index: 80; /* Di bawah sidebar */
+      z-index: 80;
       position: relative;
     }
 
@@ -49,7 +49,7 @@
     }
 
     .profile-pic {
-      width: 70px; /* SAMA DENGAN LOGO BOSSX */
+      width: 70px;
       height: 70px;
       border-radius: 50%;
       object-fit: cover;
@@ -65,20 +65,20 @@
 
     .username {
       font-weight: 700;
-      font-size: 18px; /* DIPERBESAR */
+      font-size: 18px;
       color: white;
     }
 
     .validator-id {
-      font-size: 14px; /* DIPERBESAR */
+      font-size: 14px;
       color: #FFB6C1;
       font-weight: 600;
     }
 
-    /* Sidebar — FULL HEIGHT & OVER HEADER */
+    /* Sidebar */
     .sidebar {
       width: 260px;
-      height: 100vh; /* Full height from top */
+      height: 100vh;
       background: rgba(25, 25, 35, 0.92);
       backdrop-filter: blur(10px);
       color: white;
@@ -86,7 +86,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 100; /* Di atas header */
+      z-index: 100;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -99,7 +99,7 @@
     }
 
     .logo {
-      width: 70px; /* Ukuran logo */
+      width: 70px;
       height: auto;
       margin-right: 12px;
     }
@@ -146,11 +146,11 @@
       border-left: 4px solid #FF69B4;
     }
 
-    /* Main Content — adjust for sidebar & header */
+    /* Main Content */
     .main-content {
       flex: 1;
       margin-left: 260px;
-      padding: 80px 40px 40px; /* Atas lebih besar karena header + sidebar tumpang tindih */
+      padding: 80px 40px 40px;
       color: white;
       transition: margin-left 0.4s ease;
     }
@@ -168,7 +168,7 @@
       opacity: 0.9;
     }
 
-    /* Sidebar collapsed state */
+    /* Sidebar collapsed */
     .sidebar.collapsed {
       width: 80px;
     }
@@ -214,7 +214,7 @@
 </head>
 <body>
 
-  <!-- Sidebar — sekarang full height & di atas header -->
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
@@ -229,9 +229,9 @@
     </div>
   </div>
 
-  <!-- Header — tetap ada, tapi di bawah sidebar -->
+  <!-- Header -->
   <div class="header">
-    <div class="datetime" id="datetime">Loading date & time...</div>
+    <div class="datetime" id="datetime">Loading...</div>
     <div class="user-info">
       <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
       <div class="user-details">
@@ -248,7 +248,7 @@
   </div>
 
   <script>
-    // Format tanggal & waktu real-time
+    // ✅ FUNGSI JAM REAL-TIME — FORMAT LENGKAP: "Hari, tanggal Bulan Tahun — jam:menit:detik"
     function updateDateTime() {
       const now = new Date();
       const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -262,13 +262,13 @@
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
 
+      // Format: "Senin, 5 April 2025 — 14:32:45"
       document.getElementById('datetime').textContent = 
-        `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}:${seconds}`;
+        `${dayName}, ${date} ${monthName} ${year} — ${hours}:${minutes}:${seconds}`;
     }
 
-    // Update setiap detik
     setInterval(updateDateTime, 1000);
-    updateDateTime(); // Tampilkan saat halaman pertama kali dibuka
+    updateDateTime(); // Tampilkan langsung saat halaman dibuka
 
     // Toggle Sidebar
     document.addEventListener('DOMContentLoaded', function () {
