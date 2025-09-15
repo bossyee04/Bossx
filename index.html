@@ -46,8 +46,8 @@
         }
 
         .logo {
-            width: 60px; /* DIPERBESAR */
-            height: 60px; /* DIPERBESAR */
+            width: 60px;
+            height: 60px;
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -60,7 +60,7 @@
 
         .brand {
             margin-left: 15px;
-            font-size: 32px; /* DIPERBESAR */
+            font-size: 32px;
             font-weight: 700;
             background: linear-gradient(to right, #ffcc00, #ff9900);
             -webkit-background-clip: text;
@@ -159,7 +159,6 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Waktu Realtime (Kiri) */
         .datetime {
             text-align: left;
             font-size: 14px;
@@ -174,7 +173,6 @@
             color: #ffffff;
         }
 
-        /* Profil User (Kanan) */
         .profile-container {
             display: flex;
             align-items: center;
@@ -182,8 +180,8 @@
         }
 
         .profile-pic {
-            width: 60px; /* SAMA DENGAN LOGO */
-            height: 60px; /* SAMA DENGAN LOGO */
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #ffcc00;
@@ -211,73 +209,157 @@
             margin-top: 2px;
         }
 
-        /* === CONTENT AREA === */
-        .content-area {
+        /* === DASHBOARD CONTENT AREA === */
+        .dashboard-content {
             padding: 40px;
             flex: 1;
         }
 
-        .content-area h2 {
+        .dashboard-content h1 {
             font-size: 32px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
             background: linear-gradient(to right, #ffffff, #ccccff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .content-area p {
-            font-size: 16px;
-            color: #a0a0c0;
+        /* Stat Cards */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
+        .stat-card {
             background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 18px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card:hover {
+        .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.1);
         }
 
-        .card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
+        .stat-card h3 {
+            font-size: 16px;
+            color: #a0a0d0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
             color: #ffcc00;
+            margin-bottom: 5px;
         }
 
-        .card p {
-            color: #b0b0d0;
-            line-height: 1.6;
+        .stat-card .trend {
+            font-size: 13px;
+            color: #66ff99;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        /* Animasi masuk halus */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Charts & Tables Section */
+        .section {
+            background: rgba(20, 20, 40, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .sidebar, .main-content {
-            animation: fadeInUp 0.8s ease forwards;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .section-header a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .section-header a:hover {
+            color: #ff9900;
+        }
+
+        /* Placeholder Grafik */
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0a0d0;
+            font-size: 16px;
+            border: 1px dashed #555;
+        }
+
+        /* Tabel Aktivitas */
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activity-table th,
+        .activity-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-table th {
+            font-size: 14px;
+            font-weight: 600;
+            color: #a0a0d0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-table td {
+            font-size: 15px;
+            color: #e0e0ff;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: rgba(102, 255, 153, 0.15);
+            color: #66ff99;
+        }
+
+        .status.pending {
+            background: rgba(255, 204, 0, 0.15);
+            color: #ffcc00;
         }
 
         /* RESPONSIVE */
@@ -312,14 +394,14 @@
                 width: 50px;
                 height: 50px;
             }
-            .content-area {
+            .dashboard-content {
                 padding: 20px;
             }
-            .content-area h2 {
+            .dashboard-content h1 {
                 font-size: 24px;
             }
-            .card {
-                padding: 20px;
+            .stat-cards {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -346,13 +428,10 @@
     <div class="main-content">
         <!-- Header Bar -->
         <div class="header-bar">
-            <!-- Waktu Realtime (Kiri) -->
             <div class="datetime">
                 <div class="date" id="current-date">Senin, 01 Januari 2024</div>
                 <div id="current-time">00:00:00</div>
             </div>
-
-            <!-- Profil User (Kanan) -->
             <div class="profile-container">
                 <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
                 <div class="profile-info">
@@ -362,24 +441,69 @@
             </div>
         </div>
 
-        <!-- Konten Utama -->
-        <div class="content-area">
-            <h2>Selamat Datang di BossX Dashboard</h2>
-            <p>Kelola asetmu dengan gaya mewah dan performa tinggi.</p>
+        <!-- DASHBOARD CONTENT -->
+        <div class="dashboard-content">
+            <h1>📊 Dashboard Overview</h1>
 
-            <div class="content-grid">
-                <div class="card">
-                    <h3>📈 Statistik Hari Ini</h3>
-                    <p>Belum ada data. Mulai dengan deposit atau aktifkan masternode.</p>
+            <!-- Statistik Ringkasan -->
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <h3>Total Balance</h3>
+                    <div class="value">0.00 BOSSX</div>
+                    <div class="trend">↑ 0% from yesterday</div>
                 </div>
-                <div class="card">
-                    <h3>💰 Saldo Tersedia</h3>
-                    <p>0.00 BOSSX</p>
+                <div class="stat-card">
+                    <h3>Masternode Active</h3>
+                    <div class="value">0</div>
+                    <div class="trend">↑ 0 nodes</div>
                 </div>
-                <div class="card">
-                    <h3>⏳ Aktivitas Terakhir</h3>
-                    <p>Belum ada transaksi.</p>
+                <div class="stat-card">
+                    <h3>Total Deposit</h3>
+                    <div class="value">0.00 BOSSX</div>
+                    <div class="trend">— No activity</div>
                 </div>
+                <div class="stat-card">
+                    <h3>Total Withdrawal</h3>
+                    <div class="value">0.00 BOSSX</div>
+                    <div class="trend">— No activity</div>
+                </div>
+            </div>
+
+            <!-- Grafik -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>📈 Performance Chart</h2>
+                    <a href="#">View Details</a>
+                </div>
+                <div class="chart-placeholder">
+                    [Grafik akan ditampilkan di sini — sesuai materimu]
+                </div>
+            </div>
+
+            <!-- Tabel Aktivitas -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>⏳ Recent Activity</h2>
+                    <a href="#">See All</a>
+                </div>
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>TYPE</th>
+                            <th>AMOUNT</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td><span class="status pending">No Data</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -403,56 +527,19 @@
             document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        // Update setiap detik
         setInterval(updateDateTime, 1000);
-        updateDateTime(); // Panggil langsung saat load
+        updateDateTime();
 
-        // Highlight menu saat diklik
+        // Highlight menu
         document.addEventListener('DOMContentLoaded', function () {
             const menuLinks = document.querySelectorAll('.menu a');
-            
             menuLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    // Hapus active dari semua
-                    menuLinks.forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    
-                    // Tambahkan active ke yang diklik
+                    menuLinks.forEach(item => item.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    // Update judul halaman utama
-                    const title = this.getAttribute('data-title');
-                    document.querySelector('.content-area h2').textContent = title;
-                    
-                    // Animasi kecil saat ganti halaman
-                    const contentArea = document.querySelector('.content-area');
-                    contentArea.style.opacity = '0';
-                    setTimeout(() => {
-                        contentArea.style.opacity = '1';
-                    }, 100);
+                    document.querySelector('.dashboard-content h1').textContent = this.getAttribute('data-title');
                 });
-            });
-        });
-
-        // Efek parallax ringan saat scroll
-        window.addEventListener('scroll', function() {
-            const offset = window.pageYOffset;
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) {
-                sidebar.style.backgroundPositionY = -offset * 0.3 + 'px';
-            }
-        });
-
-        // Animasi hover card
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
             });
         });
     </script>
