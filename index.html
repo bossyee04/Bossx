@@ -53,6 +53,7 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #FF69B4;
+      box-shadow: 0 0 8px rgba(255, 105, 180, 0.6);
     }
 
     .user-details {
@@ -217,7 +218,7 @@
   <div class="header">
     <div class="datetime" id="datetime">Loading date & time...</div>
     <div class="user-info">
-      <img src="https://i.ibb.co/0jB0HvT/default-profile.png" alt="Profile" class="profile-pic">
+      <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" class="profile-pic">
       <div class="user-details">
         <div class="username">Fery Muliawan</div>
         <div class="validator-id">VALIDATOR ID: 8055x</div>
@@ -267,7 +268,7 @@
 
     // Update setiap detik
     setInterval(updateDateTime, 1000);
-    updateDateTime(); // Panggil pertama kali
+    updateDateTime(); // Tampilkan saat halaman pertama kali dibuka
 
     // Toggle Sidebar
     document.addEventListener('DOMContentLoaded', function () {
