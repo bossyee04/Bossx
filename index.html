@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BossX - Crypto Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -18,19 +18,71 @@
       background-attachment: fixed;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 30px;
+      background: rgba(25, 25, 35, 0.85);
+      backdrop-filter: blur(10px);
+      color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 90;
+    }
+
+    .datetime {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-pic {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #FF69B4;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 16px;
+      color: white;
+    }
+
+    .validator-id {
+      font-size: 12px;
+      color: #FFB6C1;
+      font-weight: 500;
     }
 
     /* Sidebar */
     .sidebar {
       width: 260px;
-      height: 100vh;
+      height: calc(100vh - 60px); /* adjust for header */
       background: rgba(25, 25, 35, 0.92);
       backdrop-filter: blur(10px);
       color: white;
       transition: all 0.4s ease;
       position: fixed;
-      top: 0;
+      top: 60px; /* below header */
       left: 0;
       z-index: 100;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
@@ -75,7 +127,6 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Menu styling */
     .sidebar-menu {
       padding: 20px 0;
     }
@@ -97,6 +148,7 @@
     .main-content {
       flex: 1;
       margin-left: 260px;
+      margin-top: 60px; /* below header */
       padding: 40px;
       color: white;
       transition: margin-left 0.4s ease;
@@ -160,6 +212,19 @@
   </style>
 </head>
 <body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="datetime" id="datetime">Loading date & time...</div>
+    <div class="user-info">
+      <img src="https://i.ibb.co/0jB0HvT/default-profile.png" alt="Profile" class="profile-pic">
+      <div class="user-details">
+        <div class="username">Fery Muliawan</div>
+        <div class="validator-id">VALIDATOR ID: 8055x</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -182,25 +247,37 @@
   </div>
 
   <script>
+    // Format tanggal & waktu real-time
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+      const dayName = days[now.getDay()];
+      const date = now.getDate();
+      const monthName = months[now.getMonth()];
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      document.getElementById('datetime').textContent = 
+        `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}:${seconds}`;
+    }
+
+    // Update setiap detik
+    setInterval(updateDateTime, 1000);
+    updateDateTime(); // Panggil pertama kali
+
+    // Toggle Sidebar
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.getElementById('toggleBtn');
       const sidebar = document.getElementById('sidebar');
       const mainContent = document.getElementById('mainContent');
 
-      // Toggle sidebar
       toggleBtn.addEventListener('click', function () {
         sidebar.classList.toggle('collapsed');
         mainContent.classList.toggle('collapsed');
-      });
-
-      // Optional: Close sidebar on mobile when clicking outside (enhancement)
-      document.addEventListener('click', function (e) {
-        if (window.innerWidth <= 768) {
-          if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('collapsed');
-          }
-        }
       });
     });
   </script>
