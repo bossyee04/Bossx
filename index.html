@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masternodes</title>
+    <title>BossX</title>
     <style>
         body {
             margin: 0;
@@ -17,6 +17,9 @@
         header {
             height: 60px;
             background: #4B0082;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
         }
 
         .container {
@@ -28,18 +31,55 @@
             width: 250px;
             background: #800080;
             height: calc(100vh - 60px);
+            transition: width 0.3s;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+        }
+
+        .sidebar-menu {
+            padding: 20px;
         }
 
         main {
             flex: 1;
+            padding: 20px;
+        }
+
+        .toggle-btn {
+            background: #4B0082;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-right: 15px;
         }
     </style>
 </head>
 <body>
-    <header></header>
+    <header>
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        BossX
+    </header>
     <div class="container">
-        <aside class="sidebar"></aside>
-        <main></main>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-menu">
+                <div>Dashboard Masternode</div>
+                <div>Deposit</div>
+            </div>
+        </aside>
+        <main>
+            <!-- Konten utama akan diisi sesuai perintah Anda selanjutnya -->
+        </main>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+    </script>
 </body>
 </html>
