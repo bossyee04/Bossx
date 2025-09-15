@@ -177,22 +177,22 @@
 
         /* === RUNNING TEXT === */
         .running-text {
-            background: rgba(255, 204, 0, 0.1);
+            background: rgba(255, 204, 0, 0.05);
             padding: 12px 0;
             overflow: hidden;
             white-space: nowrap;
             position: relative;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 1px solid rgba(255, 204, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 204, 0, 0.2);
+            border-top: 1px solid rgba(255, 204, 0, 0.1);
         }
 
         .running-text .content {
             display: inline-block;
-            color: #ffcc00;
+            color: #FFD700; /* Emas murni */
             font-weight: 600;
             font-size: 16px;
-            animation: scrollText 25s linear infinite;
-            text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+            animation: scrollText 40s linear infinite;
+            text-shadow: 0 0 4px rgba(255, 215, 0, 0.5); /* Sedikit glow, tidak silau */
         }
 
         @keyframes scrollText {
@@ -200,7 +200,46 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* === DASHBOARD CONTENT AREA — KOSONG STRUKTUR SAJA === */
+        /* === CARD NEON EMAS (MINIMALIST) === */
+        .card-neon {
+            background: rgba(15, 15, 26, 0.8);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border-image: linear-gradient(45deg, #FFD700, #FFD700) 1;
+            transition: all 0.3s ease;
+        }
+
+        .card-neon:hover {
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD700;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .card-subtext {
+            font-size: 14px;
+            color: #ccccff;
+        }
+
+        /* === DASHBOARD CONTENT AREA === */
         .dashboard-content {
             padding: 40px;
             flex: 1;
@@ -228,7 +267,16 @@
             }
             .running-text .content {
                 font-size: 14px;
-                animation-duration: 20s;
+                animation-duration: 35s;
+            }
+            .card-neon {
+                padding: 16px;
+            }
+            .card-title {
+                font-size: 16px;
+            }
+            .card-value {
+                font-size: 20px;
             }
         }
     </style>
@@ -276,13 +324,27 @@
             </div>
         </div>
 
-        <!-- DASHBOARD CONTENT — KOSONG, SIAP ISI OLEH KAMU -->
+        <!-- DASHBOARD CONTENT -->
         <div class="dashboard-content">
-            <!-- 
-                ⚠️ AREA INI KHUSUS UNTUKMU ISI SENDIRI
-                Tidak ada teks, tidak ada card, tidak ada tabel — hanya container kosong.
-                Kamu bisa mulai menulis <div>, <table>, <canvas>, dll di sini sesuai materimu.
-            -->
+            <div class="dashboard-section">
+                <div class="card-neon">
+                    <div class="card-title">Total Balance</div>
+                    <div class="card-value">₿ 12.567</div>
+                    <div class="card-subtext">+2.4% today</div>
+                </div>
+
+                <div class="card-neon">
+                    <div class="card-title">Today's Earnings</div>
+                    <div class="card-value">₿ 0.89</div>
+                    <div class="card-subtext">From 3 active nodes</div>
+                </div>
+
+                <div class="card-neon">
+                    <div class="card-title">Active Nodes</div>
+                    <div class="card-value">23</div>
+                    <div class="card-subtext">Online: 21 / Offline: 2</div>
+                </div>
+            </div>
         </div>
     </div>
 
