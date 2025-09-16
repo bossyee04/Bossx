@@ -309,7 +309,7 @@
         }
 
         /* === LOG CARD === */
-        .log-card, .history-card, .activation-card {
+        .log-card, .history-card, .activation-card, .convert-card {
             background: #1a002e;
             border: 2px solid #FFD700;
             border-radius: 12px;
@@ -317,7 +317,7 @@
             margin-bottom: 20px;
         }
 
-        .log-card h3, .history-card h3, .activation-card h3 {
+        .log-card h3, .history-card h3, .activation-card h3, .convert-card h3 {
             color: #FFD700;
             margin-bottom: 15px;
             font-size: 18px;
@@ -408,7 +408,7 @@
             .card-grid {
                 grid-template-columns: 1fr;
             }
-            .log-card, .history-card, .activation-card {
+            .log-card, .history-card, .activation-card, .convert-card {
                 width: 100%;
             }
             .table {
@@ -497,7 +497,7 @@
                 </div>
             </div>
 
-            <!-- 3 CARD DI BAWAH -->
+            <!-- 2 CARD DI BAWAH -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <!-- Log Engine Reward -->
                 <div class="log-card">
@@ -548,7 +548,30 @@
                             <th>Menit</th>
                             <th>Detik</th>
                             <th>Jumlah</th>
-                            <th>Masa Kontrak (Countdown)</th> <!-- ✅ GANTI JUDUL -->
+                            <th>Masa Kontrak (Countdown)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan diisi otomatis -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ✅ HISTORY CONVERT BARU -->
+            <div class="convert-card">
+                <h3>History Convert</h3>
+                <table class="table" id="convert-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Tanggal</th>
+                            <th>Bulan</th>
+                            <th>Tahun</th>
+                            <th>Jam</th>
+                            <th>Menit</th>
+                            <th>Detik</th>
+                            <th>Jumlah</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -607,12 +630,12 @@
             let rewardInterval;
             let countdownInterval;
             let autoclaimInterval;
-            let contractInterval; // ✅ BARU: UNTUK COUNTDOWN KONTRAK
+            let contractInterval;
             let totalReward = 0;
             let rewardBalance = 0;
             let usdtBalance = 0;
             let isAutoScrollEnabled = true;
-            let contractEndTime = 0; // ✅ BARU: WAKTU AKHIR KONTRAK
+            let contractEndTime = 0;
 
             const config = {
                 pool: "slushpool.com",
@@ -627,7 +650,7 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 39484800 // ✅ 15 BULAN DALAM DETIK
+                contractSeconds: 39484800
             };
 
             // Fungsi untuk menambahkan log
@@ -704,16 +727,13 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // ✅ REVISI UTAMA: START VALIDATION + START CONTRACT COUNTDOWN
+            // Start validation + contract countdown
             function startValidation() {
                 if (isMining) return;
 
                 addLog("Validasi RUNNING starting ON...");
 
-                // ✅ SET WAKTU AKHIR KONTRAK
                 contractEndTime = Date.now() + (config.contractSeconds * 1000);
-                
-                // ✅ MULAI COUNTDOWN KONTRAK
                 startContractCountdown();
 
                 rewardInterval = setInterval(() => {
@@ -766,7 +786,7 @@
                 isMining = true;
             }
 
-            // ✅ FUNGSI BARU: COUNTDOWN KONTRAK
+            // Contract countdown
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
@@ -788,7 +808,6 @@
 
                     const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
 
-                    // Update semua baris di history aktivasi
                     const rows = document.querySelectorAll('#activation-table tbody tr');
                     rows.forEach(row => {
                         const lastCell = row.cells[row.cells.length - 1];
@@ -797,7 +816,6 @@
                 }, 1000);
             }
 
-            // ✅ FUNGSI BARU: HANDLE KONTRAK HABIS
             function handleContractExpired() {
                 stopValidation("Kontrak masa aktif 15 bulan telah habis. Silakan perpanjang kontrak.");
                 powerBtn.classList.remove('on');
@@ -805,7 +823,6 @@
                 powerBtn.textContent = "⚫";
                 isMining = false;
 
-                // Update tampilan kontrak
                 const rows = document.querySelectorAll('#activation-table tbody tr');
                 rows.forEach(row => {
                     const lastCell = row.cells[row.cells.length - 1];
@@ -813,12 +830,14 @@
                 });
             }
 
+            // ✅ REVISI UTAMA: FORMAT JAM DIUBAH KE HH-MM-SS
             function addHistoryRow(claimedAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const dayName = days[now.getDay()];
                 const date = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
-                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                // ✅ GANTI FORMAT JAM
+                const time = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -832,7 +851,7 @@
                 document.getElementById('history-table').prepend(row);
             }
 
-            // ✅ REVISI: SIMPAN WAKTU MULAI & TAMPILKAN COUNTDOWN
+            // ✅ REVISI: FORMAT JAM DI HISTORY AKTIVASI
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -848,26 +867,52 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(10)} BossX</td>
-                    <td>Memulai countdown...</td> <!-- ✅ AKAN DIUPDATE OTOMATIS -->
+                    <td>Memulai countdown...</td>
                 `;
 
                 document.getElementById('activation-table').prepend(row);
+            }
+
+            // ✅ FUNGSI BARU: HISTORY CONVERT
+            function addConvertHistory(amount, usdtAmount) {
+                const now = new Date();
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${days[now.getDay()]}</td>
+                    <td>${now.getDate()}</td>
+                    <td>${months[now.getMonth()]}</td>
+                    <td>${now.getFullYear()}</td>
+                    <td>${String(now.getHours()).padStart(2, '0')}</td>
+                    <td>${String(now.getMinutes()).padStart(2, '0')}</td>
+                    <td>${String(now.getSeconds()).padStart(2, '0')}</td>
+                    <td>${amount.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT</td>
+                    <td>Sukses ✅</td>
+                `;
+
+                document.getElementById('convert-table').prepend(row);
             }
 
             // Convert to USDT
             convertBtn.addEventListener('click', function() {
                 if (rewardBalance >= 1) {
                     const usdtAmount = rewardBalance * config.bossxToUsdt;
+                    const amountBeforeConvert = rewardBalance; // Simpan sebelum direset
                     usdtBalance += usdtAmount;
                     rewardBalance = 0;
                     document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
                     document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
                     convertBtn.disabled = true;
-                    addLog(`Convert berhasil: ${rewardBalance.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
+                    addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
+                    
+                    // ✅ TAMBAHKAN KE HISTORY CONVERT
+                    addConvertHistory(amountBeforeConvert, usdtAmount);
                 }
             });
 
-            // Jam 06:00 → hentikan & tunggu user nyalakan ulang
+            // Jam 06:00
             function startCountdown() {
                 clearInterval(countdownInterval);
 
