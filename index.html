@@ -524,7 +524,7 @@
                                 <th>Tanggal</th>
                                 <th>Jam</th>
                                 <th>BossX</th>
-                                <th>Status</th> <!-- ✅ GANTI DARI "Auto-Claim" -->
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -548,7 +548,7 @@
                             <th>Menit</th>
                             <th>Detik</th>
                             <th>Jumlah</th>
-                            <th>Masa Akhir Kontrak</th>
+                            <th>Masa Kontrak (Countdown)</th> <!-- ✅ GANTI JUDUL -->
                         </tr>
                     </thead>
                     <tbody>
@@ -607,10 +607,12 @@
             let rewardInterval;
             let countdownInterval;
             let autoclaimInterval;
-            let totalReward = 0; // Validasi Running
-            let rewardBalance = 0; // Reward Validasi
-            let usdtBalance = 0; // Balance USDT
+            let contractInterval; // ✅ BARU: UNTUK COUNTDOWN KONTRAK
+            let totalReward = 0;
+            let rewardBalance = 0;
+            let usdtBalance = 0;
             let isAutoScrollEnabled = true;
+            let contractEndTime = 0; // ✅ BARU: WAKTU AKHIR KONTRAK
 
             const config = {
                 pool: "slushpool.com",
@@ -624,7 +626,8 @@
                 fanSpeed: 75,
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
-                bossxToUsdt: 1.00
+                bossxToUsdt: 1.00,
+                contractSeconds: 39484800 // ✅ 15 BULAN DALAM DETIK
             };
 
             // Fungsi untuk menambahkan log
@@ -690,7 +693,7 @@
                 }
             });
 
-            // User hanya bisa NYALAKAN, tidak bisa MATIKAN manual
+            // User hanya bisa NYALAKAN
             powerBtn.addEventListener('click', function() {
                 if (!isNodeActivated) return;
                 if (isMining) return;
@@ -701,11 +704,17 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // Mulai validasi
+            // ✅ REVISI UTAMA: START VALIDATION + START CONTRACT COUNTDOWN
             function startValidation() {
                 if (isMining) return;
 
                 addLog("Validasi RUNNING starting ON...");
+
+                // ✅ SET WAKTU AKHIR KONTRAK
+                contractEndTime = Date.now() + (config.contractSeconds * 1000);
+                
+                // ✅ MULAI COUNTDOWN KONTRAK
+                startContractCountdown();
 
                 rewardInterval = setInterval(() => {
                     if (isMining) {
@@ -728,22 +737,15 @@
 
                     if (autoclaimTimer <= 0) {
                         autoclaimTimer = 60;
-                        
-                        // ✅ SIMPAN JUMLAH YANG DIKLAIM SAAT INI
                         const claimedAmount = totalReward;
                         rewardBalance += claimedAmount;
                         totalReward = 0;
-
                         document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
                         document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(10) + " BossX";
-                        
                         if (rewardBalance >= 1) {
                             convertBtn.disabled = false;
                         }
-
-                        // ✅ KIRIM claimedAmount, BUKAN rewardBalance
                         addHistoryRow(claimedAmount);
-
                         addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
                     }
                 }, 1000);
@@ -764,13 +766,58 @@
                 isMining = true;
             }
 
-            // ✅ REVISI UTAMA: TAMBAH DETIK + GANTI STATUS + TAMPILKAN CLAIMED AMOUNT
+            // ✅ FUNGSI BARU: COUNTDOWN KONTRAK
+            function startContractCountdown() {
+                clearInterval(contractInterval);
+
+                contractInterval = setInterval(() => {
+                    const now = Date.now();
+                    const remainingMs = contractEndTime - now;
+                    
+                    if (remainingMs <= 0) {
+                        clearInterval(contractInterval);
+                        handleContractExpired();
+                        return;
+                    }
+
+                    const remainingSeconds = Math.floor(remainingMs / 1000);
+                    const days = Math.floor(remainingSeconds / (24 * 60 * 60));
+                    const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
+                    const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+                    const seconds = remainingSeconds % 60;
+
+                    const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+
+                    // Update semua baris di history aktivasi
+                    const rows = document.querySelectorAll('#activation-table tbody tr');
+                    rows.forEach(row => {
+                        const lastCell = row.cells[row.cells.length - 1];
+                        lastCell.textContent = countdownText;
+                    });
+                }, 1000);
+            }
+
+            // ✅ FUNGSI BARU: HANDLE KONTRAK HABIS
+            function handleContractExpired() {
+                stopValidation("Kontrak masa aktif 15 bulan telah habis. Silakan perpanjang kontrak.");
+                powerBtn.classList.remove('on');
+                powerBtn.classList.add('off');
+                powerBtn.textContent = "⚫";
+                isMining = false;
+
+                // Update tampilan kontrak
+                const rows = document.querySelectorAll('#activation-table tbody tr');
+                rows.forEach(row => {
+                    const lastCell = row.cells[row.cells.length - 1];
+                    lastCell.textContent = "Kontrak Habis";
+                });
+            }
+
             function addHistoryRow(claimedAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const dayName = days[now.getDay()];
                 const date = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
-                // ✅ TAMBAHKAN DETIK
                 const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
                 const row = document.createElement('tr');
@@ -779,21 +826,18 @@
                     <td>${date}</td>
                     <td>${time}</td>
                     <td>${claimedAmount.toFixed(10)} BossX</td>
-                    <td>✅ auto claim</td> <!-- ✅ GANTI FORMAT STATUS -->
+                    <td>✅ auto claim</td>
                 `;
 
                 document.getElementById('history-table').prepend(row);
             }
 
-            // Tambahkan baris ke history aktivasi
+            // ✅ REVISI: SIMPAN WAKTU MULAI & TAMPILKAN COUNTDOWN
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                const endDate = new Date(now);
-                endDate.setDate(endDate.getDate() + 30);
-                const endDateString = `${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
-
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${days[now.getDay()]}</td>
@@ -804,7 +848,7 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(10)} BossX</td>
-                    <td>${endDateString}</td>
+                    <td>Memulai countdown...</td> <!-- ✅ AKAN DIUPDATE OTOMATIS -->
                 `;
 
                 document.getElementById('activation-table').prepend(row);
