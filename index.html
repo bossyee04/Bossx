@@ -524,7 +524,7 @@
                                 <th>Tanggal</th>
                                 <th>Jam</th>
                                 <th>BossX</th>
-                                <th>Auto-Claim</th>
+                                <th>Status</th> <!-- ✅ GANTI DARI "Auto-Claim" -->
                             </tr>
                         </thead>
                         <tbody>
@@ -690,11 +690,10 @@
                 }
             });
 
-            // ✅ REVISI UTAMA: USER TIDAK BISA MATIKAN MANUAL — HANYA BISA NYALAKAN
+            // User hanya bisa NYALAKAN, tidak bisa MATIKAN manual
             powerBtn.addEventListener('click', function() {
-                // Hanya bisa dinyalakan, tidak bisa dimatikan manual
                 if (!isNodeActivated) return;
-                if (isMining) return; // ❌ Jika sudah nyala, tidak bisa diklik lagi untuk matikan
+                if (isMining) return;
 
                 startValidation();
                 powerBtn.classList.remove('off');
@@ -729,14 +728,22 @@
 
                     if (autoclaimTimer <= 0) {
                         autoclaimTimer = 60;
-                        rewardBalance += totalReward;
+                        
+                        // ✅ SIMPAN JUMLAH YANG DIKLAIM SAAT INI
+                        const claimedAmount = totalReward;
+                        rewardBalance += claimedAmount;
                         totalReward = 0;
+
                         document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
                         document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(10) + " BossX";
+                        
                         if (rewardBalance >= 1) {
                             convertBtn.disabled = false;
                         }
-                        addHistoryRow(rewardBalance);
+
+                        // ✅ KIRIM claimedAmount, BUKAN rewardBalance
+                        addHistoryRow(claimedAmount);
+
                         addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
                     }
                 }, 1000);
@@ -757,21 +764,22 @@
                 isMining = true;
             }
 
-            // Tambahkan baris ke history validasi
-            function addHistoryRow(amount) {
+            // ✅ REVISI UTAMA: TAMBAH DETIK + GANTI STATUS + TAMPILKAN CLAIMED AMOUNT
+            function addHistoryRow(claimedAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const dayName = days[now.getDay()];
                 const date = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
-                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                // ✅ TAMBAHKAN DETIK
+                const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${dayName}</td>
                     <td>${date}</td>
                     <td>${time}</td>
-                    <td>${amount.toFixed(10)} BossX</td>
-                    <td>✅</td>
+                    <td>${claimedAmount.toFixed(10)} BossX</td>
+                    <td>✅ auto claim</td> <!-- ✅ GANTI FORMAT STATUS -->
                 `;
 
                 document.getElementById('history-table').prepend(row);
@@ -815,7 +823,7 @@
                 }
             });
 
-            // Hitung mundur ke jam 06:00 + MATIKAN OTOMATIS
+            // Jam 06:00 → hentikan & tunggu user nyalakan ulang
             function startCountdown() {
                 clearInterval(countdownInterval);
 
@@ -836,18 +844,17 @@
                     const countdownText = `Stop validasi jam 06:00 (${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')})`;
                     document.getElementById('validasi-running-status').textContent = countdownText;
 
-                    // ✅ MATIKAN OTOMATIS JAM 06:00
                     if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-                        stopValidation("Maintenance harian dimulai — sistem mematikan validasi otomatis.");
+                        stopValidation("Validasi dihentikan otomatis jam 06:00. Segera klik ON untuk melanjutkan dan hindari kehilangan reward!");
                         powerBtn.classList.remove('on');
                         powerBtn.classList.add('off');
                         powerBtn.textContent = "⚫";
-                        isMining = false; // Penting!
+                        isMining = false;
                     }
                 }, 1000);
             }
 
-            // Hentikan validasi (hanya dipanggil oleh sistem)
+            // Hentikan validasi
             function stopValidation(reason = "Sistem dimatikan") {
                 clearInterval(rewardInterval);
                 clearInterval(logInterval);
