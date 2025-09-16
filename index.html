@@ -534,7 +534,7 @@
                 </div>
             </div>
 
-            <!-- ✅ HISTORY AKTIVASI — SUDAH DIPERBAIKI -->
+            <!-- History Aktivasi -->
             <div class="activation-card">
                 <h3>History Aktivasi</h3>
                 <table class="table" id="activation-table">
@@ -636,6 +636,8 @@
             let usdtBalance = 0;
             let isAutoScrollEnabled = true;
             let contractEndTime = 0;
+            let registeredAmount = 0; // ✅ BARU: SIMPAN JUMLAH REGISTER
+            let rewardPerSecond = 0; // ✅ BARU: REWARD PER DETIK
 
             const config = {
                 pool: "slushpool.com",
@@ -650,7 +652,8 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 39484800 // 457 hari
+                contractSeconds: 39484800, // 457 hari
+                secondsPerMonth: 2592000 // 30 hari = 2.592.000 detik
             };
 
             // Fungsi untuk menambahkan log
@@ -702,6 +705,7 @@
                 const value = parseFloat(bossxInput.value);
                 if (value >= 10) {
                     isNodeActivated = true;
+                    registeredAmount = value; // ✅ SIMPAN JUMLAH REGISTER
                     activateBtn.disabled = true;
                     bossxInput.disabled = true;
                     powerBtn.classList.add('active');
@@ -727,9 +731,13 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // Start validation + contract countdown
+            // ✅ REVISI UTAMA: LOGIKA REWARD BARU — 10% PER BULAN DIBAGI PER DETIK
             function startValidation() {
                 if (isMining) return;
+
+                // ✅ HITUNG REWARD PER DETIK: 10% per bulan / detik dalam bulan
+                rewardPerSecond = (0.10 * registeredAmount) / config.secondsPerMonth;
+                addLog(`Reward dihitung: ${rewardPerSecond.toExponential(2)} BossX/detik dari ${registeredAmount} BossX`, "INFO");
 
                 addLog("Validasi RUNNING starting ON...");
 
@@ -738,7 +746,7 @@
 
                 rewardInterval = setInterval(() => {
                     if (isMining) {
-                        totalReward += 0.0000000001;
+                        totalReward += rewardPerSecond;
                         document.getElementById('validasi-running').textContent = totalReward.toFixed(10) + " BossX";
                     }
                 }, 1000);
@@ -773,7 +781,7 @@
                 logInterval = setInterval(() => {
                     const messages = [
                         () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
-                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: 0.0000000001 ${config.currency}`,
+                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: ${rewardPerSecond.toFixed(12)} ${config.currency}`,
                         () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${totalReward.toFixed(10)} ${config.currency}`,
                         () => `High temp on GPU#0: ${Math.floor(Math.random() * 15) + 75}°C | Fan: ${Math.floor(Math.random() * 20) + 80}%`,
                         () => `Network latency spike (${Math.floor(Math.random() * 200) + 100}ms). Monitoring...`
@@ -790,30 +798,37 @@
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
+                // Tampilkan countdown awal
+                updateContractDisplay();
+
                 contractInterval = setInterval(() => {
-                    const now = Date.now();
-                    const remainingMs = contractEndTime - now;
-                    
-                    if (remainingMs <= 0) {
-                        clearInterval(contractInterval);
-                        handleContractExpired();
-                        return;
-                    }
-
-                    const remainingSeconds = Math.floor(remainingMs / 1000);
-                    const days = Math.floor(remainingSeconds / (24 * 60 * 60));
-                    const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
-                    const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-                    const seconds = remainingSeconds % 60;
-
-                    const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
-
-                    const rows = document.querySelectorAll('#activation-table tbody tr');
-                    rows.forEach(row => {
-                        const lastCell = row.cells[row.cells.length - 1];
-                        lastCell.textContent = countdownText;
-                    });
+                    updateContractDisplay();
                 }, 1000);
+            }
+
+            function updateContractDisplay() {
+                const now = Date.now();
+                const remainingMs = contractEndTime - now;
+                
+                if (remainingMs <= 0) {
+                    clearInterval(contractInterval);
+                    handleContractExpired();
+                    return;
+                }
+
+                const remainingSeconds = Math.floor(remainingMs / 1000);
+                const days = Math.floor(remainingSeconds / (24 * 60 * 60));
+                const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
+                const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+                const seconds = remainingSeconds % 60;
+
+                const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+
+                const rows = document.querySelectorAll('#activation-table tbody tr');
+                rows.forEach(row => {
+                    const lastCell = row.cells[row.cells.length - 1];
+                    lastCell.textContent = countdownText;
+                });
             }
 
             function handleContractExpired() {
@@ -826,7 +841,7 @@
                 const rows = document.querySelectorAll('#activation-table tbody tr');
                 rows.forEach(row => {
                     const lastCell = row.cells[row.cells.length - 1];
-                    lastCell.textContent = "Kontrak Habis";
+                    lastCell.textContent = "Kontrak Habis — Silakan Perpanjang";
                 });
             }
 
@@ -849,19 +864,16 @@
                 document.getElementById('history-table').prepend(row);
             }
 
-            // ✅ ✅ ✅ REVISI UTAMA: TAMPILKAN COUNTDOWN AWAL 457 HARI SAAT AKTIVASI
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 
-                // ✅ HITUNG COUNTDOWN AWAL: 39.484.800 detik = 457 hari
                 const totalSeconds = config.contractSeconds;
                 const daysInitial = Math.floor(totalSeconds / (24 * 60 * 60));
                 const hoursInitial = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
                 const minutesInitial = Math.floor((totalSeconds % (60 * 60)) / 60);
                 const secondsInitial = totalSeconds % 60;
-
                 const initialCountdown = `${daysInitial} hari ${hoursInitial} jam ${minutesInitial} menit ${secondsInitial} detik`;
 
                 const row = document.createElement('tr');
@@ -874,7 +886,7 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(10)} BossX</td>
-                    <td>${initialCountdown}</td> <!-- ✅ INI YANG BENAR -->
+                    <td>${initialCountdown}</td>
                 `;
 
                 document.getElementById('activation-table').prepend(row);
@@ -916,7 +928,7 @@
                 }
             });
 
-            // Jam 06:00
+            // Jam 06:00 → hentikan reward
             function startCountdown() {
                 clearInterval(countdownInterval);
 
