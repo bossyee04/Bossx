@@ -453,10 +453,10 @@
             </div>
         </div>
 
-        <!-- RUNNING TEXT -->
+        <!-- ✅ REVISI: RUNNING TEXT BARU -->
         <div class="running-text">
             <div class="content">
-                🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $1.00 ▲ 0.0% (Live) | 🎉 Selamat datang di komunitas BossX — tempatnya profit konsisten & masternode terpercaya! 💰 Harga BOSSX/USDT: $1.00 ▲ 0.0% (Live)
+                - selamat datang para contributor BossX dengan program masternode , Update harga BossX/USDT : $1
             </div>
         </div>
 
@@ -464,30 +464,30 @@
         <div class="dashboard-content">
             <!-- 4 CARD HORIZONTAL -->
             <div class="card-grid">
-                <!-- Aktivasi Node -->
+                <!-- ✅ REVISI: TURUNKAN INPUT & TOMBOL -->
                 <div class="card">
                     <h3>Aktivasi Node</h3>
                     <p id="node-amount">0.0000000000 BossX</p>
-                    <div style="margin-top: 10px;">
+                    <div style="margin-top: 30px;"> <!-- ✅ DITURUNKAN -->
                         <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
-                    <button class="btn" id="activate-btn" disabled>Aktivkan Validasi</button>
+                    <button class="btn" id="activate-btn" disabled style="margin-top: 20px;">Aktivkan Validasi</button> <!-- ✅ DITURUNKAN -->
                 </div>
 
-                <!-- Validasi Running -->
+                <!-- ✅ REVISI: HAPUS "(Estimasi)" -->
                 <div class="card">
-                    <h3>Validasi Running (Estimasi)</h3>
+                    <h3>Validasi Running</h3> <!-- ✅ "(Estimasi)" DIHAPUS -->
                     <p id="validasi-running">0.0000000000 BossX</p>
                     <small id="validasi-running-status">Belum berjalan</small>
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- Reward Validasi -->
+                <!-- ✅ REVISI: TURUNKAN AUTO-CLAIM & TOMBOL CONVERT -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.0000000000 BossX</p>
-                    <small id="reward-countdown">Auto-claim in: --</small>
-                    <button class="btn" id="convert-btn" disabled>Convert to USDT</button>
+                    <small id="reward-countdown" style="margin-top: 20px;">Auto-claim in: --</small> <!-- ✅ DITURUNKAN -->
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 10px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
                 </div>
 
                 <!-- Balance USDT -->
@@ -557,7 +557,7 @@
                 </table>
             </div>
 
-            <!-- ✅ HISTORY CONVERT BARU -->
+            <!-- History Convert -->
             <div class="convert-card">
                 <h3>History Convert</h3>
                 <table class="table" id="convert-table">
@@ -786,34 +786,41 @@
                 isMining = true;
             }
 
-            // Contract countdown
+            // ✅ REVISI UTAMA: PERBAIKI COUNTDOWN DI HISTORY AKTIVASI
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
+                // ✅ UPDATE LANGSUNG SAAT MULAI
+                updateContractDisplay();
+
                 contractInterval = setInterval(() => {
-                    const now = Date.now();
-                    const remainingMs = contractEndTime - now;
-                    
-                    if (remainingMs <= 0) {
-                        clearInterval(contractInterval);
-                        handleContractExpired();
-                        return;
-                    }
-
-                    const remainingSeconds = Math.floor(remainingMs / 1000);
-                    const days = Math.floor(remainingSeconds / (24 * 60 * 60));
-                    const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
-                    const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-                    const seconds = remainingSeconds % 60;
-
-                    const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
-
-                    const rows = document.querySelectorAll('#activation-table tbody tr');
-                    rows.forEach(row => {
-                        const lastCell = row.cells[row.cells.length - 1];
-                        lastCell.textContent = countdownText;
-                    });
+                    updateContractDisplay();
                 }, 1000);
+            }
+
+            function updateContractDisplay() {
+                const now = Date.now();
+                const remainingMs = contractEndTime - now;
+                
+                if (remainingMs <= 0) {
+                    clearInterval(contractInterval);
+                    handleContractExpired();
+                    return;
+                }
+
+                const remainingSeconds = Math.floor(remainingMs / 1000);
+                const days = Math.floor(remainingSeconds / (24 * 60 * 60));
+                const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
+                const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+                const seconds = remainingSeconds % 60;
+
+                const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+
+                const rows = document.querySelectorAll('#activation-table tbody tr');
+                rows.forEach(row => {
+                    const lastCell = row.cells[row.cells.length - 1];
+                    lastCell.textContent = countdownText;
+                });
             }
 
             function handleContractExpired() {
@@ -830,13 +837,11 @@
                 });
             }
 
-            // ✅ REVISI UTAMA: FORMAT JAM DIUBAH KE HH-MM-SS
             function addHistoryRow(claimedAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const dayName = days[now.getDay()];
                 const date = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
-                // ✅ GANTI FORMAT JAM
                 const time = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
 
                 const row = document.createElement('tr');
@@ -851,7 +856,7 @@
                 document.getElementById('history-table').prepend(row);
             }
 
-            // ✅ REVISI: FORMAT JAM DI HISTORY AKTIVASI
+            // ✅ REVISI: TAMPILKAN COUNTDOWN LANGSUNG SAAT AKTIVASI
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -867,13 +872,12 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(10)} BossX</td>
-                    <td>Memulai countdown...</td>
+                    <td>0 hari 0 jam 0 menit 0 detik</td> <!-- ✅ AKAN DIUPDATE OTOMATIS -->
                 `;
 
                 document.getElementById('activation-table').prepend(row);
             }
 
-            // ✅ FUNGSI BARU: HISTORY CONVERT
             function addConvertHistory(amount, usdtAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -899,15 +903,13 @@
             convertBtn.addEventListener('click', function() {
                 if (rewardBalance >= 1) {
                     const usdtAmount = rewardBalance * config.bossxToUsdt;
-                    const amountBeforeConvert = rewardBalance; // Simpan sebelum direset
+                    const amountBeforeConvert = rewardBalance;
                     usdtBalance += usdtAmount;
                     rewardBalance = 0;
                     document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
                     document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
                     convertBtn.disabled = true;
                     addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
-                    
-                    // ✅ TAMBAHKAN KE HISTORY CONVERT
                     addConvertHistory(amountBeforeConvert, usdtAmount);
                 }
             });
