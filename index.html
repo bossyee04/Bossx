@@ -20,6 +20,59 @@
             color: #e0e0ff;
             overflow-x: hidden;
             min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+
+        /* === THEME SIANG === */
+        body.day-theme {
+            background: linear-gradient(135deg, #6a11cb, #2575fc, #ff6b6b, #ee5a88);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body.day-theme .sidebar {
+            background: linear-gradient(180deg, #5a2a82, #8e44ad);
+        }
+
+        body.day-theme .main-content {
+            background: linear-gradient(135deg, #9b59b6, #e74c3c, #fd79a8, #6c5ce7);
+        }
+
+        body.day-theme .card,
+        body.day-theme .log-card,
+        body.day-theme .history-card,
+        body.day-theme .activation-card,
+        body.day-theme .convert-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ff6b9d;
+            color: #ffffff;
+        }
+
+        body.day-theme .brand {
+            background: linear-gradient(to right, #ff6b9d, #ee5a88, #9b59b6, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.day-theme .menu a {
+            color: #f3e5f5;
+        }
+
+        body.day-theme .menu a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.day-theme .menu a.active {
+            color: #ffffff;
+            background: rgba(255, 107, 157, 0.3);
+            border-left: 4px solid #ff6b9d;
         }
 
         /* === SIDEBAR === */
@@ -148,8 +201,7 @@
             text-align: center;
         }
 
-        .datetime #current-date,
-        .datetime #current-time {
+        .datetime #current-datetime {
             font-size: 18px;
             font-weight: 600;
             color: #ffffff;
@@ -441,8 +493,7 @@
         <div class="header-bar">
             <button class="toggle-btn" id="toggle-sidebar">☰</button>
             <div class="datetime">
-                <div id="current-date">Loading...</div>
-                <div id="current-time">--:--:--</div>
+                <div id="current-datetime">Loading...</div> <!-- ✅ GABUNG TANGGAL + JAM -->
             </div>
             <div class="profile-container">
                 <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
@@ -482,12 +533,12 @@
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- Reward Validasi -->
+                <!-- ✅ REVISI: TURUNKAN POSISI AUTO-CLAIM & TOMBOL CONVERT -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.000000000 BossX</p>
-                    <small id="reward-countdown" style="margin-top: 20px;">Auto-claim in: --</small>
-                    <button class="btn" id="convert-btn" disabled style="margin-top: 10px;">Convert to USDT</button>
+                    <small id="reward-countdown" style="margin-top: 30px;">Auto-claim in: --</small> <!-- ✅ DITURUNKAN -->
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 20px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
                 </div>
 
                 <!-- Balance USDT -->
@@ -534,7 +585,7 @@
                 </div>
             </div>
 
-            <!-- ✅ HISTORY AKTIVASI — SUDAH FIX 40.000.000 DETIK -->
+            <!-- History Aktivasi -->
             <div class="activation-card">
                 <h3>History Aktivasi</h3>
                 <table class="table" id="activation-table">
@@ -583,8 +634,8 @@
     </div>
 
     <script>
-        // === REALTIME CLOCK ===
-        function updateDateTime() {
+        // === REALTIME CLOCK + THEME ===
+        function updateDateTimeAndTheme() {
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             const now = new Date();
@@ -596,12 +647,20 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
 
-            document.getElementById('current-date').textContent = `${dayName}, ${date} ${monthName} ${year}`;
-            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+            // ✅ GABUNG TANGGAL + JAM
+            document.getElementById('current-datetime').textContent = `${dayName}, ${date} ${monthName} ${year}, ${hours}-${minutes}-${seconds}`;
+
+            // ✅ AUTO THEME SIANG/MALAM
+            const hour = now.getHours();
+            if (hour >= 6 && hour < 18) {
+                document.body.classList.add('day-theme');
+            } else {
+                document.body.classList.remove('day-theme');
+            }
         }
 
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
+        setInterval(updateDateTimeAndTheme, 1000);
+        updateDateTimeAndTheme();
 
         // Menu active toggle + Sidebar toggle
         document.addEventListener('DOMContentLoaded', function () {
@@ -652,7 +711,7 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 40000000, // ✅ ✅ ✅ 40 JUTA DETIK — FIX SESUAI PERMINTAANMU
+                contractSeconds: 40000000, // ✅ 40 JUTA DETIK
                 secondsPerMonth: 2592000
             };
 
@@ -741,7 +800,7 @@
                 addLog("Validasi RUNNING starting ON...");
 
                 contractEndTime = Date.now() + (config.contractSeconds * 1000);
-                startContractCountdown();
+                startContractCountdown(); // ✅ JALANKAN COUNTDOWN
 
                 rewardInterval = setInterval(() => {
                     if (isMining) {
@@ -793,37 +852,30 @@
                 isMining = true;
             }
 
-            // ✅ ✅ ✅ REVISI UTAMA: COUNTDOWN 40.000.000 DETIK MURNI
+            // ✅ ✅ ✅ PERBAIKAN UTAMA: COUNTDOWN 40JT DETIK BERJALAN SAAT POWER ON
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
-                // Tampilkan countdown awal
-                updateContractDisplay();
-
+                // ✅ UPDATE SETIAP DETIK — JANGAN LUPA PANGGIL INTERVAL!
                 contractInterval = setInterval(() => {
-                    updateContractDisplay();
-                }, 1000);
-            }
+                    const now = Date.now();
+                    const remainingMs = contractEndTime - now;
+                    
+                    if (remainingMs <= 0) {
+                        clearInterval(contractInterval);
+                        handleContractExpired();
+                        return;
+                    }
 
-            function updateContractDisplay() {
-                const now = Date.now();
-                const remainingMs = contractEndTime - now;
-                
-                if (remainingMs <= 0) {
-                    clearInterval(contractInterval);
-                    handleContractExpired();
-                    return;
-                }
+                    const remainingSeconds = Math.floor(remainingMs / 1000);
+                    const countdownText = `${remainingSeconds} detik`;
 
-                const remainingSeconds = Math.floor(remainingMs / 1000);
-                // ✅ TAMPILKAN LANGSUNG DETIK MURNI — TANPA FORMAT HARI/JAM
-                const countdownText = `${remainingSeconds} detik`;
-
-                const rows = document.querySelectorAll('#activation-table tbody tr');
-                rows.forEach(row => {
-                    const lastCell = row.cells[row.cells.length - 1];
-                    lastCell.textContent = countdownText;
-                });
+                    const rows = document.querySelectorAll('#activation-table tbody tr');
+                    rows.forEach(row => {
+                        const lastCell = row.cells[row.cells.length - 1];
+                        lastCell.textContent = countdownText;
+                    });
+                }, 1000); // ✅ INI YANG PENTING — UPDATE TIAP DETIK
             }
 
             function handleContractExpired() {
@@ -859,13 +911,11 @@
                 document.getElementById('history-table').prepend(row);
             }
 
-            // ✅ SAAT AKTIVASI → TAMPILKAN 40.000.000 detik
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 
-                // ✅ TAMPILKAN DETIK AWAL: 40.000.000 detik
                 const initialCountdown = `${config.contractSeconds} detik`;
 
                 const row = document.createElement('tr');
@@ -878,7 +928,7 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(9)} BossX</td>
-                    <td>${initialCountdown}</td> <!-- ✅ 40.000.000 detik -->
+                    <td>${initialCountdown}</td>
                 `;
 
                 document.getElementById('activation-table').prepend(row);
