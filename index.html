@@ -453,7 +453,7 @@
             </div>
         </div>
 
-        <!-- ✅ REVISI: RUNNING TEXT BARU -->
+        <!-- Running Text -->
         <div class="running-text">
             <div class="content">
                 - selamat datang para contributor BossX dengan program masternode , Update harga BossX/USDT : $1
@@ -464,30 +464,30 @@
         <div class="dashboard-content">
             <!-- 4 CARD HORIZONTAL -->
             <div class="card-grid">
-                <!-- ✅ REVISI: TURUNKAN INPUT & TOMBOL -->
+                <!-- Aktivasi Node -->
                 <div class="card">
                     <h3>Aktivasi Node</h3>
                     <p id="node-amount">0.0000000000 BossX</p>
-                    <div style="margin-top: 30px;"> <!-- ✅ DITURUNKAN -->
+                    <div style="margin-top: 30px;">
                         <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
-                    <button class="btn" id="activate-btn" disabled style="margin-top: 20px;">Aktivkan Validasi</button> <!-- ✅ DITURUNKAN -->
+                    <button class="btn" id="activate-btn" disabled style="margin-top: 20px;">Aktivkan Validasi</button>
                 </div>
 
-                <!-- ✅ REVISI: HAPUS "(Estimasi)" -->
+                <!-- Validasi Running -->
                 <div class="card">
-                    <h3>Validasi Running</h3> <!-- ✅ "(Estimasi)" DIHAPUS -->
+                    <h3>Validasi Running</h3>
                     <p id="validasi-running">0.0000000000 BossX</p>
                     <small id="validasi-running-status">Belum berjalan</small>
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- ✅ REVISI: TURUNKAN AUTO-CLAIM & TOMBOL CONVERT -->
+                <!-- Reward Validasi -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.0000000000 BossX</p>
-                    <small id="reward-countdown" style="margin-top: 20px;">Auto-claim in: --</small> <!-- ✅ DITURUNKAN -->
-                    <button class="btn" id="convert-btn" disabled style="margin-top: 10px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
+                    <small id="reward-countdown" style="margin-top: 20px;">Auto-claim in: --</small>
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 10px;">Convert to USDT</button>
                 </div>
 
                 <!-- Balance USDT -->
@@ -534,7 +534,7 @@
                 </div>
             </div>
 
-            <!-- History Aktivasi -->
+            <!-- ✅ HISTORY AKTIVASI — SUDAH DIPERBAIKI -->
             <div class="activation-card">
                 <h3>History Aktivasi</h3>
                 <table class="table" id="activation-table">
@@ -650,7 +650,7 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 39484800
+                contractSeconds: 39484800 // 457 hari
             };
 
             // Fungsi untuk menambahkan log
@@ -786,41 +786,34 @@
                 isMining = true;
             }
 
-            // ✅ REVISI UTAMA: PERBAIKI COUNTDOWN DI HISTORY AKTIVASI
+            // Contract countdown
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
-                // ✅ UPDATE LANGSUNG SAAT MULAI
-                updateContractDisplay();
-
                 contractInterval = setInterval(() => {
-                    updateContractDisplay();
+                    const now = Date.now();
+                    const remainingMs = contractEndTime - now;
+                    
+                    if (remainingMs <= 0) {
+                        clearInterval(contractInterval);
+                        handleContractExpired();
+                        return;
+                    }
+
+                    const remainingSeconds = Math.floor(remainingMs / 1000);
+                    const days = Math.floor(remainingSeconds / (24 * 60 * 60));
+                    const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
+                    const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+                    const seconds = remainingSeconds % 60;
+
+                    const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+
+                    const rows = document.querySelectorAll('#activation-table tbody tr');
+                    rows.forEach(row => {
+                        const lastCell = row.cells[row.cells.length - 1];
+                        lastCell.textContent = countdownText;
+                    });
                 }, 1000);
-            }
-
-            function updateContractDisplay() {
-                const now = Date.now();
-                const remainingMs = contractEndTime - now;
-                
-                if (remainingMs <= 0) {
-                    clearInterval(contractInterval);
-                    handleContractExpired();
-                    return;
-                }
-
-                const remainingSeconds = Math.floor(remainingMs / 1000);
-                const days = Math.floor(remainingSeconds / (24 * 60 * 60));
-                const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
-                const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-                const seconds = remainingSeconds % 60;
-
-                const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
-
-                const rows = document.querySelectorAll('#activation-table tbody tr');
-                rows.forEach(row => {
-                    const lastCell = row.cells[row.cells.length - 1];
-                    lastCell.textContent = countdownText;
-                });
             }
 
             function handleContractExpired() {
@@ -856,12 +849,21 @@
                 document.getElementById('history-table').prepend(row);
             }
 
-            // ✅ REVISI: TAMPILKAN COUNTDOWN LANGSUNG SAAT AKTIVASI
+            // ✅ ✅ ✅ REVISI UTAMA: TAMPILKAN COUNTDOWN AWAL 457 HARI SAAT AKTIVASI
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 
+                // ✅ HITUNG COUNTDOWN AWAL: 39.484.800 detik = 457 hari
+                const totalSeconds = config.contractSeconds;
+                const daysInitial = Math.floor(totalSeconds / (24 * 60 * 60));
+                const hoursInitial = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+                const minutesInitial = Math.floor((totalSeconds % (60 * 60)) / 60);
+                const secondsInitial = totalSeconds % 60;
+
+                const initialCountdown = `${daysInitial} hari ${hoursInitial} jam ${minutesInitial} menit ${secondsInitial} detik`;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${days[now.getDay()]}</td>
@@ -872,7 +874,7 @@
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
                     <td>${amount.toFixed(10)} BossX</td>
-                    <td>0 hari 0 jam 0 menit 0 detik</td> <!-- ✅ AKAN DIUPDATE OTOMATIS -->
+                    <td>${initialCountdown}</td> <!-- ✅ INI YANG BENAR -->
                 `;
 
                 document.getElementById('activation-table').prepend(row);
