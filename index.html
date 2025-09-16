@@ -467,9 +467,9 @@
                 <!-- Aktivasi Node -->
                 <div class="card">
                     <h3>Aktivasi Node</h3>
-                    <p id="node-amount">0.0000000000 BossX</p>
+                    <p id="node-amount">0.000000000 BossX</p>
                     <div style="margin-top: 30px;">
-                        <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.0000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
+                        <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
                     <button class="btn" id="activate-btn" disabled style="margin-top: 20px;">Aktivkan Validasi</button>
                 </div>
@@ -477,7 +477,7 @@
                 <!-- Validasi Running -->
                 <div class="card">
                     <h3>Validasi Running</h3>
-                    <p id="validasi-running">0.0000000000 BossX</p>
+                    <p id="validasi-running">0.000000000 BossX</p>
                     <small id="validasi-running-status">Belum berjalan</small>
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
@@ -485,7 +485,7 @@
                 <!-- Reward Validasi -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
-                    <p id="reward-validasi">0.0000000000 BossX</p>
+                    <p id="reward-validasi">0.000000000 BossX</p>
                     <small id="reward-countdown" style="margin-top: 20px;">Auto-claim in: --</small>
                     <button class="btn" id="convert-btn" disabled style="margin-top: 10px;">Convert to USDT</button>
                 </div>
@@ -534,7 +534,7 @@
                 </div>
             </div>
 
-            <!-- History Aktivasi -->
+            <!-- ✅ HISTORY AKTIVASI — SUDAH FIX 40.000.000 DETIK -->
             <div class="activation-card">
                 <h3>History Aktivasi</h3>
                 <table class="table" id="activation-table">
@@ -548,7 +548,7 @@
                             <th>Menit</th>
                             <th>Detik</th>
                             <th>Jumlah</th>
-                            <th>Masa Kontrak (Countdown)</th>
+                            <th>Masa Kontrak (Detik)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -636,8 +636,8 @@
             let usdtBalance = 0;
             let isAutoScrollEnabled = true;
             let contractEndTime = 0;
-            let registeredAmount = 0; // ✅ BARU: SIMPAN JUMLAH REGISTER
-            let rewardPerSecond = 0; // ✅ BARU: REWARD PER DETIK
+            let registeredAmount = 0;
+            let rewardPerSecond = 0;
 
             const config = {
                 pool: "slushpool.com",
@@ -652,8 +652,8 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 39484800, // 457 hari
-                secondsPerMonth: 2592000 // 30 hari = 2.592.000 detik
+                contractSeconds: 40000000, // ✅ ✅ ✅ 40 JUTA DETIK — FIX SESUAI PERMINTAANMU
+                secondsPerMonth: 2592000
             };
 
             // Fungsi untuk menambahkan log
@@ -690,7 +690,7 @@
                 let value = parseFloat(this.value) || 0;
                 if (isNaN(value)) value = 0;
 
-                const formattedValue = value.toFixed(10);
+                const formattedValue = value.toFixed(9);
                 nodeAmountText.textContent = `${formattedValue} BossX`;
 
                 if (value >= 10) {
@@ -705,7 +705,7 @@
                 const value = parseFloat(bossxInput.value);
                 if (value >= 10) {
                     isNodeActivated = true;
-                    registeredAmount = value; // ✅ SIMPAN JUMLAH REGISTER
+                    registeredAmount = value;
                     activateBtn.disabled = true;
                     bossxInput.disabled = true;
                     powerBtn.classList.add('active');
@@ -713,8 +713,8 @@
                     powerBtn.title = "";
                     powerBtn.textContent = "⚫";
 
-                    addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(10)} BossX - Status: Aktif`);
-                    nodeAmountText.textContent = `${value.toFixed(10)} BossX`;
+                    addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(9)} BossX - Status: Aktif`);
+                    nodeAmountText.textContent = `${value.toFixed(9)} BossX`;
 
                     addActivationRow(value);
                 }
@@ -731,13 +731,12 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // ✅ REVISI UTAMA: LOGIKA REWARD BARU — 10% PER BULAN DIBAGI PER DETIK
+            // Start validation + contract countdown
             function startValidation() {
                 if (isMining) return;
 
-                // ✅ HITUNG REWARD PER DETIK: 10% per bulan / detik dalam bulan
                 rewardPerSecond = (0.10 * registeredAmount) / config.secondsPerMonth;
-                addLog(`Reward dihitung: ${rewardPerSecond.toExponential(2)} BossX/detik dari ${registeredAmount} BossX`, "INFO");
+                addLog(`Reward dihitung: ${rewardPerSecond.toFixed(9)} BossX/detik dari ${registeredAmount} BossX`, "INFO");
 
                 addLog("Validasi RUNNING starting ON...");
 
@@ -747,7 +746,7 @@
                 rewardInterval = setInterval(() => {
                     if (isMining) {
                         totalReward += rewardPerSecond;
-                        document.getElementById('validasi-running').textContent = totalReward.toFixed(10) + " BossX";
+                        document.getElementById('validasi-running').textContent = totalReward.toFixed(9) + " BossX";
                     }
                 }, 1000);
 
@@ -768,8 +767,8 @@
                         const claimedAmount = totalReward;
                         rewardBalance += claimedAmount;
                         totalReward = 0;
-                        document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
-                        document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(10) + " BossX";
+                        document.getElementById('validasi-running').textContent = "0.000000000 BossX";
+                        document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(9) + " BossX";
                         if (rewardBalance >= 1) {
                             convertBtn.disabled = false;
                         }
@@ -781,8 +780,8 @@
                 logInterval = setInterval(() => {
                     const messages = [
                         () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
-                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: ${rewardPerSecond.toFixed(12)} ${config.currency}`,
-                        () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${totalReward.toFixed(10)} ${config.currency}`,
+                        () => `Accepted Share #${Math.floor(Math.random() * 1000000) + 2345100} (Diff: ${config.difficulty}) - Reward: ${rewardPerSecond.toFixed(9)} ${config.currency}`,
+                        () => `Hash: ${parseFloat((Math.random() * 10 + 90).toFixed(1))} MH/s | Bal: ${totalReward.toFixed(9)} ${config.currency}`,
                         () => `High temp on GPU#0: ${Math.floor(Math.random() * 15) + 75}°C | Fan: ${Math.floor(Math.random() * 20) + 80}%`,
                         () => `Network latency spike (${Math.floor(Math.random() * 200) + 100}ms). Monitoring...`
                     ];
@@ -794,7 +793,7 @@
                 isMining = true;
             }
 
-            // Contract countdown
+            // ✅ ✅ ✅ REVISI UTAMA: COUNTDOWN 40.000.000 DETIK MURNI
             function startContractCountdown() {
                 clearInterval(contractInterval);
 
@@ -817,12 +816,8 @@
                 }
 
                 const remainingSeconds = Math.floor(remainingMs / 1000);
-                const days = Math.floor(remainingSeconds / (24 * 60 * 60));
-                const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
-                const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-                const seconds = remainingSeconds % 60;
-
-                const countdownText = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+                // ✅ TAMPILKAN LANGSUNG DETIK MURNI — TANPA FORMAT HARI/JAM
+                const countdownText = `${remainingSeconds} detik`;
 
                 const rows = document.querySelectorAll('#activation-table tbody tr');
                 rows.forEach(row => {
@@ -832,7 +827,7 @@
             }
 
             function handleContractExpired() {
-                stopValidation("Kontrak masa aktif 15 bulan telah habis. Silakan perpanjang kontrak.");
+                stopValidation("Kontrak masa aktif telah habis. Silakan perpanjang kontrak.");
                 powerBtn.classList.remove('on');
                 powerBtn.classList.add('off');
                 powerBtn.textContent = "⚫";
@@ -841,7 +836,7 @@
                 const rows = document.querySelectorAll('#activation-table tbody tr');
                 rows.forEach(row => {
                     const lastCell = row.cells[row.cells.length - 1];
-                    lastCell.textContent = "Kontrak Habis — Silakan Perpanjang";
+                    lastCell.textContent = "0 detik";
                 });
             }
 
@@ -857,24 +852,21 @@
                     <td>${dayName}</td>
                     <td>${date}</td>
                     <td>${time}</td>
-                    <td>${claimedAmount.toFixed(10)} BossX</td>
+                    <td>${claimedAmount.toFixed(9)} BossX</td>
                     <td>✅ auto claim</td>
                 `;
 
                 document.getElementById('history-table').prepend(row);
             }
 
+            // ✅ SAAT AKTIVASI → TAMPILKAN 40.000.000 detik
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 
-                const totalSeconds = config.contractSeconds;
-                const daysInitial = Math.floor(totalSeconds / (24 * 60 * 60));
-                const hoursInitial = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
-                const minutesInitial = Math.floor((totalSeconds % (60 * 60)) / 60);
-                const secondsInitial = totalSeconds % 60;
-                const initialCountdown = `${daysInitial} hari ${hoursInitial} jam ${minutesInitial} menit ${secondsInitial} detik`;
+                // ✅ TAMPILKAN DETIK AWAL: 40.000.000 detik
+                const initialCountdown = `${config.contractSeconds} detik`;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -885,8 +877,8 @@
                     <td>${String(now.getHours()).padStart(2, '0')}</td>
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
-                    <td>${amount.toFixed(10)} BossX</td>
-                    <td>${initialCountdown}</td>
+                    <td>${amount.toFixed(9)} BossX</td>
+                    <td>${initialCountdown}</td> <!-- ✅ 40.000.000 detik -->
                 `;
 
                 document.getElementById('activation-table').prepend(row);
@@ -906,7 +898,7 @@
                     <td>${String(now.getHours()).padStart(2, '0')}</td>
                     <td>${String(now.getMinutes()).padStart(2, '0')}</td>
                     <td>${String(now.getSeconds()).padStart(2, '0')}</td>
-                    <td>${amount.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT</td>
+                    <td>${amount.toFixed(9)} BossX → $${usdtAmount.toFixed(2)} USDT</td>
                     <td>Sukses ✅</td>
                 `;
 
@@ -920,15 +912,15 @@
                     const amountBeforeConvert = rewardBalance;
                     usdtBalance += usdtAmount;
                     rewardBalance = 0;
-                    document.getElementById('reward-validasi').textContent = "0.0000000000 BossX";
+                    document.getElementById('reward-validasi').textContent = "0.000000000 BossX";
                     document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
                     convertBtn.disabled = true;
-                    addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(10)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
+                    addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(9)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
                     addConvertHistory(amountBeforeConvert, usdtAmount);
                 }
             });
 
-            // Jam 06:00 → hentikan reward
+            // Jam 06:00
             function startCountdown() {
                 clearInterval(countdownInterval);
 
@@ -970,7 +962,7 @@
 
                 isMining = false;
                 totalReward = 0;
-                document.getElementById('validasi-running').textContent = "0.0000000000 BossX";
+                document.getElementById('validasi-running').textContent = "0.000000000 BossX";
                 document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
             }
         });
