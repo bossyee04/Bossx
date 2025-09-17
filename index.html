@@ -227,6 +227,26 @@
             font-size: 14px;
         }
 
+        /* === TOGGLE THEME BUTTON === */
+        .theme-toggle {
+            background: linear-gradient(45deg, #ffcc00, #ff9900);
+            color: #000;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.9);
+        }
+
         /* === RUNNING TEXT === */
         .running-text {
             background: rgba(255, 204, 0, 0.05);
@@ -493,9 +513,11 @@
         <div class="header-bar">
             <button class="toggle-btn" id="toggle-sidebar">☰</button>
             <div class="datetime">
-                <div id="current-datetime">Loading...</div> <!-- ✅ GABUNG TANGGAL + JAM -->
+                <div id="current-datetime">Loading...</div>
             </div>
             <div class="profile-container">
+                <!-- ✅ TOGGLE THEME BUTTON -->
+                <button class="theme-toggle" id="theme-toggle">☀️</button>
                 <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
                 <div class="profile-info">
                     <div class="username">Fery Muliawan</div>
@@ -522,7 +544,7 @@
                     <div style="margin-top: 30px;">
                         <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
-                    <button class="btn" id="activate-btn" disabled style="margin-top: 20px;">Aktivkan Validasi</button>
+                    <button class="btn" id="activate-btn" disabled style="margin-top: 30px;">Aktivkan Validasi</button> <!-- ✅ POSISI SAMA -->
                 </div>
 
                 <!-- Validasi Running -->
@@ -533,12 +555,12 @@
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- ✅ REVISI: TURUNKAN POSISI AUTO-CLAIM & TOMBOL CONVERT -->
+                <!-- ✅ REVISI: POSISI SAMA DENGAN AKTIVASI NODE -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.000000000 BossX</p>
                     <small id="reward-countdown" style="margin-top: 30px;">Auto-claim in: --</small> <!-- ✅ DITURUNKAN -->
-                    <button class="btn" id="convert-btn" disabled style="margin-top: 20px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 30px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
                 </div>
 
                 <!-- Balance USDT -->
@@ -647,20 +669,37 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
 
-            // ✅ GABUNG TANGGAL + JAM
             document.getElementById('current-datetime').textContent = `${dayName}, ${date} ${monthName} ${year}, ${hours}-${minutes}-${seconds}`;
-
-            // ✅ AUTO THEME SIANG/MALAM
-            const hour = now.getHours();
-            if (hour >= 6 && hour < 18) {
-                document.body.classList.add('day-theme');
-            } else {
-                document.body.classList.remove('day-theme');
-            }
         }
 
         setInterval(updateDateTimeAndTheme, 1000);
         updateDateTimeAndTheme();
+
+        // === TOGGLE THEME ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+
+            // Set theme awal
+            const hour = new Date().getHours();
+            if (hour >= 6 && hour < 18) {
+                body.classList.add('day-theme');
+                themeToggle.textContent = "🌙";
+            } else {
+                body.classList.remove('day-theme');
+                themeToggle.textContent = "☀️";
+            }
+
+            // Toggle manual
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('day-theme');
+                if (body.classList.contains('day-theme')) {
+                    themeToggle.textContent = "🌙";
+                } else {
+                    themeToggle.textContent = "☀️";
+                }
+            });
+        });
 
         // Menu active toggle + Sidebar toggle
         document.addEventListener('DOMContentLoaded', function () {
@@ -689,7 +728,7 @@
             let rewardInterval;
             let countdownInterval;
             let autoclaimInterval;
-            let contractInterval;
+            let contractInterval; // ✅ PENTING — INI YANG KADANG SALAH
             let totalReward = 0;
             let rewardBalance = 0;
             let usdtBalance = 0;
@@ -790,7 +829,7 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // Start validation + contract countdown
+            // ✅ ✅ ✅ START VALIDATION — PERBAIKAN UTAMA
             function startValidation() {
                 if (isMining) return;
 
@@ -799,8 +838,12 @@
 
                 addLog("Validasi RUNNING starting ON...");
 
+                // ✅ HITUNG WAKTU AKHIR KONTRAK — INI YANG SERING SALAH
                 contractEndTime = Date.now() + (config.contractSeconds * 1000);
-                startContractCountdown(); // ✅ JALANKAN COUNTDOWN
+                console.log("Contract End Time Set:", new Date(contractEndTime)); // ✅ DEBUG
+
+                // ✅ JALANKAN COUNTDOWN — INI YANG SERING TIDAK JALAN
+                startContractCountdown();
 
                 rewardInterval = setInterval(() => {
                     if (isMining) {
@@ -854,14 +897,16 @@
 
             // ✅ ✅ ✅ PERBAIKAN UTAMA: COUNTDOWN 40JT DETIK BERJALAN SAAT POWER ON
             function startContractCountdown() {
-                clearInterval(contractInterval);
+                clearInterval(contractInterval); // Clear dulu
 
-                // ✅ UPDATE SETIAP DETIK — JANGAN LUPA PANGGIL INTERVAL!
+                console.log("Starting contract countdown..."); // ✅ DEBUG
+
                 contractInterval = setInterval(() => {
                     const now = Date.now();
                     const remainingMs = contractEndTime - now;
                     
                     if (remainingMs <= 0) {
+                        console.log("Contract expired!"); // ✅ DEBUG
                         clearInterval(contractInterval);
                         handleContractExpired();
                         return;
@@ -870,12 +915,15 @@
                     const remainingSeconds = Math.floor(remainingMs / 1000);
                     const countdownText = `${remainingSeconds} detik`;
 
+                    // Update semua baris di history aktivasi
                     const rows = document.querySelectorAll('#activation-table tbody tr');
                     rows.forEach(row => {
                         const lastCell = row.cells[row.cells.length - 1];
                         lastCell.textContent = countdownText;
                     });
-                }, 1000); // ✅ INI YANG PENTING — UPDATE TIAP DETIK
+
+                    console.log("Countdown:", remainingSeconds); // ✅ DEBUG
+                }, 1000); // ✅ UPDATE TIAP DETIK — INI YANG PENTING!
             }
 
             function handleContractExpired() {
