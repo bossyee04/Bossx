@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang=\"id\">
+<html lang="id">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>BossX Dashboard - Animated Cards</title>
-    <link rel=\"icon\" href=\"https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png\" type=\"image/png\">
-    <link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BossX Dashboard - Fixed</title>
+    <link rel="icon" href="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -73,66 +73,6 @@
             color: #ffffff;
             background: rgba(255, 107, 157, 0.3);
             border-left: 4px solid #ff6b9d;
-        }
-
-        /* === ANIMATED BORDER EFFECTS === */
-        /* Running line animations - garis yang berjalan mengelilingi card */
-
-        /* Horizontal running lines (top and bottom) */
-        @keyframes running-line-horizontal {
-            0% {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-
-        /* Vertical running lines (left and right) */
-        @keyframes running-line-vertical {
-            0% {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-        }
-
-        .animate-running-line-horizontal {
-            animation: running-line-horizontal 2.8s linear infinite;
-        }
-
-        .animate-running-line-vertical {
-            animation: running-line-vertical 2.8s linear infinite;
-        }
-
-        /* Delay classes for sequential animation */
-        .delay-700 {
-            animation-delay: 0.7s;
-        }
-
-        .delay-1400 {
-            animation-delay: 1.4s;
-        }
-
-        .delay-2100 {
-            animation-delay: 2.1s;
         }
 
         /* === SIDEBAR === */
@@ -345,99 +285,6 @@
             margin-bottom: 30px;
         }
 
-        /* === ANIMATED CARD WRAPPER === */
-        .animated-card-wrapper {
-            position: relative;
-            display: block;
-        }
-
-        /* Running border lines */
-        .animated-card-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 12px;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        /* Top line */
-        .animated-card-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #22c55e, transparent);
-            animation: running-line-horizontal 2.8s linear infinite;
-            pointer-events: none;
-        }
-
-        /* Additional pseudo elements for other sides */
-        .animated-card-wrapper .running-lines {
-            position: absolute;
-            inset: 0;
-            border-radius: 12px;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .animated-card-wrapper .running-lines::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, #22c55e, transparent);
-            animation: running-line-vertical 2.8s linear infinite;
-            animation-delay: 0.7s;
-        }
-
-        .animated-card-wrapper .running-lines::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to left, transparent, #22c55e, transparent);
-            animation: running-line-horizontal 2.8s linear infinite;
-            animation-delay: 1.4s;
-        }
-
-        .animated-card-wrapper .running-lines-left {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to top, transparent, #22c55e, transparent);
-            animation: running-line-vertical 2.8s linear infinite;
-            animation-delay: 2.1s;
-        }
-
-        /* Corner dots */
-        .animated-card-wrapper .corner-dot {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .animated-card-wrapper .corner-dot.top-left { top: -2px; left: -2px; }
-        .animated-card-wrapper .corner-dot.top-right { top: -2px; right: -2px; animation-delay: 0.7s; }
-        .animated-card-wrapper .corner-dot.bottom-right { bottom: -2px; right: -2px; animation-delay: 1.4s; }
-        .animated-card-wrapper .corner-dot.bottom-left { bottom: -2px; left: -2px; animation-delay: 2.1s; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
         .card {
             background: #1a002e;
             border: 2px solid #FFD700;
@@ -445,14 +292,6 @@
             padding: 20px;
             color: #fff;
             transition: all 0.3s ease;
-            position: relative;
-            margin: 2px; /* Space for animated border */
-        }
-
-        .card:hover {
-            transform: scale(1.02);
-            border-color: #22c55e;
-            box-shadow: 0 5px 25px rgba(34, 197, 94, 0.3);
         }
 
         .card h3 {
@@ -548,14 +387,6 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            margin: 2px; /* Space for animated border */
-            transition: all 0.3s ease;
-        }
-
-        .log-card:hover, .history-card:hover, .activation-card:hover, .convert-card:hover {
-            transform: scale(1.01);
-            border-color: #22c55e;
-            box-shadow: 0 5px 25px rgba(34, 197, 94, 0.2);
         }
 
         .log-card h3, .history-card h3, .activation-card h3, .convert-card h3 {
@@ -674,245 +505,119 @@
 </head>
 <body>
     <!-- Debug Info -->
-    <div class=\"debug-info\" id=\"debug-info\">
+    <div class="debug-info" id="debug-info">
         Countdown Debug:<br>
-        Status: <span id=\"debug-status\">Stopped</span><br>
-        Remaining: <span id=\"debug-remaining\">--</span><br>
-        Updates: <span id=\"debug-updates\">0</span>
+        Status: <span id="debug-status">Stopped</span><br>
+        Remaining: <span id="debug-remaining">--</span><br>
+        Updates: <span id="debug-updates">0</span>
     </div>
 
     <!-- Sidebar -->
-    <div class=\"sidebar\" id=\"sidebar\">
-        <div class=\"logo-container\">
-            <img src=\"https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png\" alt=\"BossX Logo\" class=\"logo\">
-            <h1 class=\"brand\">BossX</h1>
+    <div class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" class="logo">
+            <h1 class="brand">BossX</h1>
         </div>
 
-        <nav class=\"menu\">
+        <nav class="menu">
             <ul>
-                <li><a href=\"#\" class=\"active\" data-title=\"Dashboard\">📊 Dashboard</a></li>
-                <li><a href=\"#\" data-title=\"Masternode\">💎 Masternode</a></li>
-                <li><a href=\"#\" data-title=\"Deposit\">📥 Deposit</a></li>
-                <li><a href=\"#\" data-title=\"Withdrawal\">📤 Withdrawal</a></li>
+                <li><a href="#" class="active" data-title="Dashboard">📊 Dashboard</a></li>
+                <li><a href="#" data-title="Masternode">💎 Masternode</a></li>
+                <li><a href="#" data-title="Deposit">📥 Deposit</a></li>
+                <li><a href="#" data-title="Withdrawal">📤 Withdrawal</a></li>
             </ul>
         </nav>
     </div>
 
     <!-- Main Content -->
-    <div class=\"main-content\" id=\"main-content\">
+    <div class="main-content" id="main-content">
         <!-- Header Bar -->
-        <div class=\"header-bar\">
-            <button class=\"toggle-btn\" id=\"toggle-sidebar\">☰</button>
-            <div class=\"datetime\">
-                <div id=\"current-datetime\">Loading...</div>
+        <div class="header-bar">
+            <button class="toggle-btn" id="toggle-sidebar">☰</button>
+            <div class="datetime">
+                <div id="current-datetime">Loading...</div>
             </div>
-            <div class=\"profile-container\">
-                <button class=\"theme-toggle\" id=\"theme-toggle\">☀️</button>
-                <img src=\"https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg\" alt=\"User Profile\" class=\"profile-pic\">
-                <div class=\"profile-info\">
-                    <div class=\"username\">Fery Muliawan</div>
-                    <div class=\"validator-id\">Validator ID: 8055x</div>
+            <div class="profile-container">
+                <button class="theme-toggle" id="theme-toggle">☀️</button>
+                <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
+                <div class="profile-info">
+                    <div class="username">Fery Muliawan</div>
+                    <div class="validator-id">Validator ID: 8055x</div>
                 </div>
             </div>
         </div>
 
         <!-- Running Text -->
-        <div class=\"running-text\">
-            <div class=\"content\">
+        <div class="running-text">
+            <div class="content">
                 - selamat datang para contributor BossX dengan program masternode , Update harga BossX/USDT : $1
             </div>
         </div>
 
         <!-- DASHBOARD CONTENT -->
-        <div class=\"dashboard-content\">
-            <!-- 4 CARD HORIZONTAL WITH ANIMATED BORDERS -->
-            <div class=\"card-grid\">
+        <div class="dashboard-content">
+            <!-- 4 CARD HORIZONTAL -->
+            <div class="card-grid">
                 <!-- Aktivasi Node -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
+                <div class="card">
+                    <h3>Aktivasi Node</h3>
+                    <p id="node-amount">0.000000000 BossX</p>
+                    <div style="margin-top: 30px;">
+                        <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"card\">
-                        <h3>Aktivasi Node</h3>
-                        <p id=\"node-amount\">0.000000000 BossX</p>
-                        <div style=\"margin-top: 30px;\">
-                            <input type=\"number\" id=\"bossx-input\" placeholder=\"minimal 10 BossX\" min=\"10\" step=\"0.000000001\" style=\"width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;\">
-                        </div>
-                        <button class=\"btn\" id=\"activate-btn\" disabled style=\"margin-top: 30px;\">Aktivkan Validasi</button>
-                    </div>
+                    <button class="btn" id="activate-btn" disabled style="margin-top: 30px;">Aktivkan Validasi</button>
                 </div>
 
                 <!-- Validasi Running -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
-                    </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"card\">
-                        <h3>Validasi Running</h3>
-                        <p id=\"validasi-running\">0.000000000 BossX</p>
-                        <small id=\"validasi-running-status\">Belum berjalan</small>
-                        <div class=\"engine-btn\" id=\"power-btn\" title=\"Aktivasi dulu di Aktivasi Node\">⚫</div>
-                    </div>
+                <div class="card">
+                    <h3>Validasi Running</h3>
+                    <p id="validasi-running">0.000000000 BossX</p>
+                    <small id="validasi-running-status">Belum berjalan</small>
+                    <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- Reward Validasi -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
-                    </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"card\">
-                        <h3>Reward Validasi</h3>
-                        <p id=\"reward-validasi\">0.000000000 BossX</p>
-                        <small id=\"reward-countdown\" style=\"margin-top: 30px;\">Auto-claim in: --</small>
-                        <button class=\"btn\" id=\"convert-btn\" disabled style=\"margin-top: 30px;\">Convert to USDT</button>
-                    </div>
+                <!-- ✅ POSISI SAMA DENGAN AKTIVASI NODE -->
+                <div class="card">
+                    <h3>Reward Validasi</h3>
+                    <p id="reward-validasi">0.000000000 BossX</p>
+                    <small id="reward-countdown" style="margin-top: 30px;">Auto-claim in: --</small>
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 30px;">Convert to USDT</button>
                 </div>
 
                 <!-- Balance USDT -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
-                    </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"card\">
-                        <h3>Balance USDT</h3>
-                        <p id=\"balance-usdt\">0.00 USDT</p>
-                    </div>
+                <div class="card">
+                    <h3>Balance USDT</h3>
+                    <p id="balance-usdt">0.00 USDT</p>
                 </div>
             </div>
 
-            <!-- 2 CARD DI BAWAH WITH ANIMATED BORDERS -->
-            <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 20px;\">
+            <!-- 2 CARD DI BAWAH -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <!-- Log Engine Reward -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
-                    </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"log-card\">
-                        <h3>Log Engine Reward</h3>
-                        <div class=\"log-terminal\" id=\"log-output\">
-                            <!-- Log akan muncul di sini -->
-                        </div>
+                <div class="log-card">
+                    <h3>Log Engine Reward</h3>
+                    <div class="log-terminal" id="log-output">
+                        <!-- Log akan muncul di sini -->
                     </div>
                 </div>
 
                 <!-- History Validasi -->
-                <div class=\"animated-card-wrapper\">
-                    <div class=\"running-lines\">
-                        <div class=\"running-lines-left\"></div>
+                <div class="history-card">
+                    <h3>History Validasi</h3>
+                    <div class="search-bar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M15.5 14a.5.5 0 0 0 0-1H14.8l-.8-8a.5.5 0 0 0-.5-.45H9.2a.5.5 0 0 0-.5.45l-.8 8H7.5a.5.5 0 0 0 0 1h1.2l.8 8a.5.5 0 0 0 .5.45h2.8a.5.5 0 0 0 .5-.45l.8-8H15.5z"/>
+                            <path d="M14 6.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-3.5 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        </svg>
+                        <input type="text" placeholder="Cari...">
                     </div>
-                    <div class=\"corner-dot top-left\"></div>
-                    <div class=\"corner-dot top-right\"></div>
-                    <div class=\"corner-dot bottom-right\"></div>
-                    <div class=\"corner-dot bottom-left\"></div>
-                    
-                    <div class=\"history-card\">
-                        <h3>History Validasi</h3>
-                        <div class=\"search-bar\">
-                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\">
-                                <path d=\"M15.5 14a.5.5 0 0 0 0-1H14.8l-.8-8a.5.5 0 0 0-.5-.45H9.2a.5.5 0 0 0-.5.45l-.8 8H7.5a.5.5 0 0 0 0 1h1.2l.8 8a.5.5 0 0 0 .5.45h2.8a.5.5 0 0 0 .5-.45l.8-8H15.5z\"/>
-                                <path d=\"M14 6.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-3.5 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z\"/>
-                            </svg>
-                            <input type=\"text\" placeholder=\"Cari...\">
-                        </div>
-                        <table class=\"table\" id=\"history-table\">
-                            <thead>
-                                <tr>
-                                    <th>Hari</th>
-                                    <th>Tanggal</th>
-                                    <th>Jam</th>
-                                    <th>BossX</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data akan diisi otomatis -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Aktivasi WITH ANIMATED BORDER -->
-            <div class=\"animated-card-wrapper\" style=\"margin-bottom: 20px;\">
-                <div class=\"running-lines\">
-                    <div class=\"running-lines-left\"></div>
-                </div>
-                <div class=\"corner-dot top-left\"></div>
-                <div class=\"corner-dot top-right\"></div>
-                <div class=\"corner-dot bottom-right\"></div>
-                <div class=\"corner-dot bottom-left\"></div>
-                
-                <div class=\"activation-card\">
-                    <h3>History Aktivasi</h3>
-                    <table class=\"table\" id=\"activation-table\">
+                    <table class="table" id="history-table">
                         <thead>
                             <tr>
                                 <th>Hari</th>
                                 <th>Tanggal</th>
-                                <th>Bulan</th>
-                                <th>Tahun</th>
                                 <th>Jam</th>
-                                <th>Menit</th>
-                                <th>Detik</th>
-                                <th>Jumlah</th>
-                                <th>Masa Kontrak (Detik)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data akan diisi otomatis -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- History Convert WITH ANIMATED BORDER -->
-            <div class=\"animated-card-wrapper\">
-                <div class=\"running-lines\">
-                    <div class=\"running-lines-left\"></div>
-                </div>
-                <div class=\"corner-dot top-left\"></div>
-                <div class=\"corner-dot top-right\"></div>
-                <div class=\"corner-dot bottom-right\"></div>
-                <div class=\"corner-dot bottom-left\"></div>
-                
-                <div class=\"convert-card\">
-                    <h3>History Convert</h3>
-                    <table class=\"table\" id=\"convert-table\">
-                        <thead>
-                            <tr>
-                                <th>Hari</th>
-                                <th>Tanggal</th>
-                                <th>Bulan</th>
-                                <th>Tahun</th>
-                                <th>Jam</th>
-                                <th>Menit</th>
-                                <th>Detik</th>
-                                <th>Jumlah</th>
+                                <th>BossX</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -921,6 +626,52 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- History Aktivasi -->
+            <div class="activation-card">
+                <h3>History Aktivasi</h3>
+                <table class="table" id="activation-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Tanggal</th>
+                            <th>Bulan</th>
+                            <th>Tahun</th>
+                            <th>Jam</th>
+                            <th>Menit</th>
+                            <th>Detik</th>
+                            <th>Jumlah</th>
+                            <th>Masa Kontrak (Detik)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan diisi otomatis -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- History Convert -->
+            <div class="convert-card">
+                <h3>History Convert</h3>
+                <table class="table" id="convert-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Tanggal</th>
+                            <th>Bulan</th>
+                            <th>Tahun</th>
+                            <th>Jam</th>
+                            <th>Menit</th>
+                            <th>Detik</th>
+                            <th>Jumlah</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan diisi otomatis -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -954,19 +705,19 @@
             const hour = new Date().getHours();
             if (hour >= 6 && hour < 18) {
                 body.classList.add('day-theme');
-                themeToggle.textContent = \"🌙\";
+                themeToggle.textContent = "🌙";
             } else {
                 body.classList.remove('day-theme');
-                themeToggle.textContent = \"☀️\";
+                themeToggle.textContent = "☀️";
             }
 
             // Toggle manual
             themeToggle.addEventListener('click', function() {
                 body.classList.toggle('day-theme');
                 if (body.classList.contains('day-theme')) {
-                    themeToggle.textContent = \"🌙\";
+                    themeToggle.textContent = "🌙";
                 } else {
-                    themeToggle.textContent = \"☀️\";
+                    themeToggle.textContent = "☀️";
                 }
             });
         });
@@ -1013,8 +764,8 @@
             let contractUpdateCounter = 0;
 
             const config = {
-                pool: \"slushpool.com\",
-                currency: \"BossX\",
+                pool: "slushpool.com",
+                currency: "BossX",
                 difficulty: 12000,
                 rewardPerShare: 0.00347,
                 minHashrate: 45,
@@ -1037,7 +788,7 @@
             }
 
             // Fungsi untuk menambahkan log
-            function addLog(message, level = \"INFO\") {
+            function addLog(message, level = "INFO") {
                 const logOutput = document.getElementById('log-output');
                 const now = new Date();
                 const timestamp = `[${now.toISOString().slice(0, 19).replace('T', ' ')}]`;
@@ -1090,8 +841,8 @@
                     bossxInput.disabled = true;
                     powerBtn.classList.add('active');
                     powerBtn.classList.add('off');
-                    powerBtn.title = \"\";
-                    powerBtn.textContent = \"⚫\";
+                    powerBtn.title = "";
+                    powerBtn.textContent = "⚫";
 
                     addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(9)} BossX - Status: Aktif`);
                     nodeAmountText.textContent = `${value.toFixed(9)} BossX`;
@@ -1100,7 +851,7 @@
                     contractRemainingSeconds = config.contractSeconds;
                     currentContractRowId = addActivationRow(value);
                     
-                    addLog(`Kontrak diinisialisasi dengan ${contractRemainingSeconds.toLocaleString()} detik (${Math.floor(contractRemainingSeconds / 86400)} hari)`, \"INFO\");
+                    addLog(`Kontrak diinisialisasi dengan ${contractRemainingSeconds.toLocaleString()} detik (${Math.floor(contractRemainingSeconds / 86400)} hari)`, "INFO");
                     updateDebugInfo();
                 }
             });
@@ -1113,7 +864,7 @@
                 startValidation();
                 powerBtn.classList.remove('off');
                 powerBtn.classList.add('on');
-                powerBtn.textContent = \"⚪\";
+                powerBtn.textContent = "⚪";
             });
 
             // ✅ ✅ ✅ COMPLETELY FIXED START VALIDATION FUNCTION
@@ -1121,8 +872,8 @@
                 if (isMining) return;
 
                 rewardPerSecond = (0.10 * registeredAmount) / config.secondsPerMonth;
-                addLog(`Reward dihitung: ${rewardPerSecond.toFixed(9)} BossX/detik dari ${registeredAmount} BossX`, \"INFO\");
-                addLog(\"Validasi RUNNING starting ON...\");
+                addLog(`Reward dihitung: ${rewardPerSecond.toFixed(9)} BossX/detik dari ${registeredAmount} BossX`, "INFO");
+                addLog("Validasi RUNNING starting ON...");
 
                 // ✅ Start the REAL countdown (direct decrement every second)
                 startContractCountdown();
@@ -1131,7 +882,7 @@
                 rewardInterval = setInterval(() => {
                     if (isMining) {
                         totalReward += rewardPerSecond;
-                        document.getElementById('validasi-running').textContent = totalReward.toFixed(9) + \" BossX\";
+                        document.getElementById('validasi-running').textContent = totalReward.toFixed(9) + " BossX";
                     }
                 }, 1000);
 
@@ -1153,13 +904,13 @@
                         const claimedAmount = totalReward;
                         rewardBalance += claimedAmount;
                         totalReward = 0;
-                        document.getElementById('validasi-running').textContent = \"0.000000000 BossX\";
-                        document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(9) + \" BossX\";
+                        document.getElementById('validasi-running').textContent = "0.000000000 BossX";
+                        document.getElementById('reward-validasi').textContent = rewardBalance.toFixed(9) + " BossX";
                         if (rewardBalance >= 1) {
                             convertBtn.disabled = false;
                         }
                         addHistoryRow(claimedAmount);
-                        addLog(\"Auto-claim executed — reward diklaim!\", \"SUCCESS\");
+                        addLog("Auto-claim executed — reward diklaim!", "SUCCESS");
                     }
                 }, 1000);
 
@@ -1185,7 +936,7 @@
                 // Clear any existing countdown
                 clearInterval(contractInterval);
                 
-                addLog(`Starting contract countdown: ${contractRemainingSeconds.toLocaleString()} detik`, \"INFO\");
+                addLog(`Starting contract countdown: ${contractRemainingSeconds.toLocaleString()} detik`, "INFO");
                 
                 // ✅ THIS IS THE KEY FIX: DIRECT COUNTDOWN DECREMENT
                 contractInterval = setInterval(() => {
@@ -1206,7 +957,7 @@
                     
                     // ✅ CHECK IF CONTRACT EXPIRED
                     if (contractRemainingSeconds <= 0) {
-                        console.log(\"Contract expired - stopping countdown!\");
+                        console.log("Contract expired - stopping countdown!");
                         clearInterval(contractInterval);
                         handleContractExpired();
                         return;
@@ -1238,17 +989,17 @@
 
             // ✅ Contract expiration handler
             function handleContractExpired() {
-                stopValidation(\"Kontrak masa aktif telah habis. Silakan perpanjang kontrak.\");
+                stopValidation("Kontrak masa aktif telah habis. Silakan perpanjang kontrak.");
                 powerBtn.classList.remove('on');
                 powerBtn.classList.add('off');
-                powerBtn.textContent = \"⚫\";
+                powerBtn.textContent = "⚫";
                 isMining = false;
 
                 // Update contract row to show 0
                 updateContractRow(0);
                 
-                addLog(\"KONTRAK BERAKHIR! Mining dihentikan otomatis.\", \"ALERT\");
-                alert(\"Kontrak 40 juta detik telah berakhir! Mining dihentikan otomatis.\");
+                addLog("KONTRAK BERAKHIR! Mining dihentikan otomatis.", "ALERT");
+                alert("Kontrak 40 juta detik telah berakhir! Mining dihentikan otomatis.");
             }
 
             // ✅ History functions
@@ -1326,10 +1077,10 @@
                     const amountBeforeConvert = rewardBalance;
                     usdtBalance += usdtAmount;
                     rewardBalance = 0;
-                    document.getElementById('reward-validasi').textContent = \"0.000000000 BossX\";
-                    document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + \" USDT\";
+                    document.getElementById('reward-validasi').textContent = "0.000000000 BossX";
+                    document.getElementById('balance-usdt').textContent = usdtBalance.toFixed(2) + " USDT";
                     convertBtn.disabled = true;
-                    addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(9)} BossX → $${usdtAmount.toFixed(2)} USDT`, \"SUCCESS\");
+                    addLog(`Convert berhasil: ${amountBeforeConvert.toFixed(9)} BossX → $${usdtAmount.toFixed(2)} USDT`, "SUCCESS");
                     addConvertHistory(amountBeforeConvert, usdtAmount);
                 }
             });
@@ -1356,29 +1107,29 @@
                     document.getElementById('validasi-running-status').textContent = countdownText;
 
                     if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-                        stopValidation(\"Validasi dihentikan otomatis jam 06:00. Segera klik ON untuk melanjutkan dan hindari kehilangan reward!\");
+                        stopValidation("Validasi dihentikan otomatis jam 06:00. Segera klik ON untuk melanjutkan dan hindari kehilangan reward!");
                         powerBtn.classList.remove('on');
                         powerBtn.classList.add('off');
-                        powerBtn.textContent = \"⚫\";
+                        powerBtn.textContent = "⚫";
                         isMining = false;
                     }
                 }, 1000);
             }
 
             // ✅ Stop validation function
-            function stopValidation(reason = \"Sistem dimatikan\") {
+            function stopValidation(reason = "Sistem dimatikan") {
                 clearInterval(rewardInterval);
                 clearInterval(logInterval);
                 clearInterval(autoclaimInterval);
                 clearInterval(countdownInterval);
                 // ✅ DON'T clear contract interval here - let it continue running!
 
-                addLog(`${reason}`, \"ALERT\");
+                addLog(`${reason}`, "ALERT");
 
                 isMining = false;
                 totalReward = 0;
-                document.getElementById('validasi-running').textContent = \"0.000000000 BossX\";
-                document.getElementById('reward-countdown').textContent = \"Auto-claim in: --\";
+                document.getElementById('validasi-running').textContent = "0.000000000 BossX";
+                document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
                 updateDebugInfo();
             }
 
