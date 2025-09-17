@@ -516,7 +516,6 @@
                 <div id="current-datetime">Loading...</div>
             </div>
             <div class="profile-container">
-                <!-- ✅ TOGGLE THEME BUTTON -->
                 <button class="theme-toggle" id="theme-toggle">☀️</button>
                 <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="User Profile" class="profile-pic">
                 <div class="profile-info">
@@ -544,7 +543,7 @@
                     <div style="margin-top: 30px;">
                         <input type="number" id="bossx-input" placeholder="minimal 10 BossX" min="10" step="0.000000001" style="width: 100%; padding: 8px; border: 1px solid #FFD700; border-radius: 6px; background: #1a002e; color: #fff; font-size: 14px;">
                     </div>
-                    <button class="btn" id="activate-btn" disabled style="margin-top: 30px;">Aktivkan Validasi</button> <!-- ✅ POSISI SAMA -->
+                    <button class="btn" id="activate-btn" disabled style="margin-top: 30px;">Aktivkan Validasi</button>
                 </div>
 
                 <!-- Validasi Running -->
@@ -555,12 +554,12 @@
                     <div class="engine-btn" id="power-btn" title="Aktivasi dulu di Aktivasi Node">⚫</div>
                 </div>
 
-                <!-- ✅ REVISI: POSISI SAMA DENGAN AKTIVASI NODE -->
+                <!-- ✅ POSISI SAMA DENGAN AKTIVASI NODE -->
                 <div class="card">
                     <h3>Reward Validasi</h3>
                     <p id="reward-validasi">0.000000000 BossX</p>
-                    <small id="reward-countdown" style="margin-top: 30px;">Auto-claim in: --</small> <!-- ✅ DITURUNKAN -->
-                    <button class="btn" id="convert-btn" disabled style="margin-top: 30px;">Convert to USDT</button> <!-- ✅ DITURUNKAN -->
+                    <small id="reward-countdown" style="margin-top: 30px;">Auto-claim in: --</small>
+                    <button class="btn" id="convert-btn" disabled style="margin-top: 30px;">Convert to USDT</button>
                 </div>
 
                 <!-- Balance USDT -->
@@ -728,7 +727,7 @@
             let rewardInterval;
             let countdownInterval;
             let autoclaimInterval;
-            let contractInterval; // ✅ PENTING — INI YANG KADANG SALAH
+            let contractInterval;
             let totalReward = 0;
             let rewardBalance = 0;
             let usdtBalance = 0;
@@ -736,6 +735,7 @@
             let contractEndTime = 0;
             let registeredAmount = 0;
             let rewardPerSecond = 0;
+            let contractStartTime = 0; // ✅ BARU: SIMPAN WAKTU AWAL KONTRAK
 
             const config = {
                 pool: "slushpool.com",
@@ -838,11 +838,15 @@
 
                 addLog("Validasi RUNNING starting ON...");
 
-                // ✅ HITUNG WAKTU AKHIR KONTRAK — INI YANG SERING SALAH
-                contractEndTime = Date.now() + (config.contractSeconds * 1000);
-                console.log("Contract End Time Set:", new Date(contractEndTime)); // ✅ DEBUG
+                // ✅ SIMPAN WAKTU AWAL KONTRAK
+                contractStartTime = Date.now(); // ✅ INI YANG PENTING
+                console.log("Contract Start Time:", new Date(contractStartTime));
 
-                // ✅ JALANKAN COUNTDOWN — INI YANG SERING TIDAK JALAN
+                // ✅ HITUNG WAKTU AKHIR KONTRAK
+                contractEndTime = contractStartTime + (config.contractSeconds * 1000);
+                console.log("Contract End Time:", new Date(contractEndTime));
+
+                // ✅ JALANKAN COUNTDOWN
                 startContractCountdown();
 
                 rewardInterval = setInterval(() => {
@@ -897,7 +901,7 @@
 
             // ✅ ✅ ✅ PERBAIKAN UTAMA: COUNTDOWN 40JT DETIK BERJALAN SAAT POWER ON
             function startContractCountdown() {
-                clearInterval(contractInterval); // Clear dulu
+                clearInterval(contractInterval);
 
                 console.log("Starting contract countdown..."); // ✅ DEBUG
 
@@ -915,7 +919,7 @@
                     const remainingSeconds = Math.floor(remainingMs / 1000);
                     const countdownText = `${remainingSeconds} detik`;
 
-                    // Update semua baris di history aktivasi
+                    // ✅ UPDATE SEMUA BARIS DI TABLE
                     const rows = document.querySelectorAll('#activation-table tbody tr');
                     rows.forEach(row => {
                         const lastCell = row.cells[row.cells.length - 1];
