@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BossX Dashboard</title>
+    <title>BossX Dashboard - Fixed</title>
     <link rel="icon" href="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -487,9 +487,31 @@
                 font-size: 12px;
             }
         }
+
+        /* Debug indicator */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
+    <!-- Debug Info -->
+    <div class="debug-info" id="debug-info">
+        Countdown Debug:<br>
+        Status: <span id="debug-status">Stopped</span><br>
+        Remaining: <span id="debug-remaining">--</span><br>
+        Updates: <span id="debug-updates">0</span>
+    </div>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="logo-container">
@@ -720,7 +742,8 @@
                 mainContent.classList.toggle('sidebar-collapsed');
             });
 
-            // State
+            // ✅ ✅ ✅ FIXED CONTRACT COUNTDOWN SYSTEM
+            // State variables
             let isNodeActivated = false;
             let isMining = false;
             let logInterval;
@@ -732,10 +755,13 @@
             let rewardBalance = 0;
             let usdtBalance = 0;
             let isAutoScrollEnabled = true;
-            let contractEndTime = 0;
             let registeredAmount = 0;
             let rewardPerSecond = 0;
-            let contractStartTime = 0; // ✅ BARU: SIMPAN WAKTU AWAL KONTRAK
+            
+            // ✅ NEW: Direct countdown variables
+            let contractRemainingSeconds = 0;
+            let currentContractRowId = null;
+            let contractUpdateCounter = 0;
 
             const config = {
                 pool: "slushpool.com",
@@ -750,9 +776,16 @@
                 sharesPerMinute: 1.5,
                 nextPayout: 0.0165,
                 bossxToUsdt: 1.00,
-                contractSeconds: 40000000, // ✅ 40 JUTA DETIK
+                contractSeconds: 40000000, // ✅ 40 MILLION SECONDS
                 secondsPerMonth: 2592000
             };
+
+            // Debug functions
+            function updateDebugInfo() {
+                document.getElementById('debug-status').textContent = isMining ? 'Running' : 'Stopped';
+                document.getElementById('debug-remaining').textContent = contractRemainingSeconds.toLocaleString();
+                document.getElementById('debug-updates').textContent = contractUpdateCounter;
+            }
 
             // Fungsi untuk menambahkan log
             function addLog(message, level = "INFO") {
@@ -814,7 +847,12 @@
                     addLog(`Pembelian node BFGMiner dengan sejumlah ${value.toFixed(9)} BossX - Status: Aktif`);
                     nodeAmountText.textContent = `${value.toFixed(9)} BossX`;
 
-                    addActivationRow(value);
+                    // ✅ Initialize contract countdown when node is activated
+                    contractRemainingSeconds = config.contractSeconds;
+                    currentContractRowId = addActivationRow(value);
+                    
+                    addLog(`Kontrak diinisialisasi dengan ${contractRemainingSeconds.toLocaleString()} detik (${Math.floor(contractRemainingSeconds / 86400)} hari)`, "INFO");
+                    updateDebugInfo();
                 }
             });
 
@@ -829,26 +867,18 @@
                 powerBtn.textContent = "⚪";
             });
 
-            // ✅ ✅ ✅ START VALIDATION — PERBAIKAN UTAMA
+            // ✅ ✅ ✅ COMPLETELY FIXED START VALIDATION FUNCTION
             function startValidation() {
                 if (isMining) return;
 
                 rewardPerSecond = (0.10 * registeredAmount) / config.secondsPerMonth;
                 addLog(`Reward dihitung: ${rewardPerSecond.toFixed(9)} BossX/detik dari ${registeredAmount} BossX`, "INFO");
-
                 addLog("Validasi RUNNING starting ON...");
 
-                // ✅ SIMPAN WAKTU AWAL KONTRAK
-                contractStartTime = Date.now(); // ✅ INI YANG PENTING
-                console.log("Contract Start Time:", new Date(contractStartTime));
-
-                // ✅ HITUNG WAKTU AKHIR KONTRAK
-                contractEndTime = contractStartTime + (config.contractSeconds * 1000);
-                console.log("Contract End Time:", new Date(contractEndTime));
-
-                // ✅ JALANKAN COUNTDOWN
+                // ✅ Start the REAL countdown (direct decrement every second)
                 startContractCountdown();
 
+                // Reward accumulation interval
                 rewardInterval = setInterval(() => {
                     if (isMining) {
                         totalReward += rewardPerSecond;
@@ -856,6 +886,7 @@
                     }
                 }, 1000);
 
+                // Auto-claim system
                 let autoclaimTimer = 60;
                 document.getElementById('reward-countdown').textContent = `Auto-claim in: ${autoclaimTimer}s`;
 
@@ -883,6 +914,7 @@
                     }
                 }, 1000);
 
+                // Mining log simulation
                 logInterval = setInterval(() => {
                     const messages = [
                         () => `GPU#0: ${parseFloat((Math.random() * 3 + 45).toFixed(1))} MH/s | Temp: ${Math.floor(Math.random() * 20) + 65}°C | Fan: ${Math.floor(Math.random() * 20) + 75}%`,
@@ -899,37 +931,63 @@
                 isMining = true;
             }
 
-            // ✅ ✅ ✅ PERBAIKAN UTAMA: COUNTDOWN 40JT DETIK BERJALAN SAAT POWER ON
+            // ✅ ✅ ✅ NEW FIXED CONTRACT COUNTDOWN - DIRECT DECREMENT EVERY SECOND!
             function startContractCountdown() {
+                // Clear any existing countdown
                 clearInterval(contractInterval);
-
-                console.log("Starting contract countdown..."); // ✅ DEBUG
-
+                
+                addLog(`Starting contract countdown: ${contractRemainingSeconds.toLocaleString()} detik`, "INFO");
+                
+                // ✅ THIS IS THE KEY FIX: DIRECT COUNTDOWN DECREMENT
                 contractInterval = setInterval(() => {
-                    const now = Date.now();
-                    const remainingMs = contractEndTime - now;
+                    // ✅ DECREMENT BY 1 SECOND DIRECTLY!
+                    contractRemainingSeconds--;
+                    contractUpdateCounter++;
                     
-                    if (remainingMs <= 0) {
-                        console.log("Contract expired!"); // ✅ DEBUG
+                    // Update debug display
+                    updateDebugInfo();
+                    
+                    // ✅ UPDATE THE SPECIFIC CONTRACT ROW IN TABLE
+                    updateContractRow(contractRemainingSeconds);
+                    
+                    // Log progress every 10 seconds (for debugging)
+                    if (contractUpdateCounter % 10 === 0) {
+                        console.log(`Contract countdown: ${contractRemainingSeconds.toLocaleString()} detik remaining`);
+                    }
+                    
+                    // ✅ CHECK IF CONTRACT EXPIRED
+                    if (contractRemainingSeconds <= 0) {
+                        console.log("Contract expired - stopping countdown!");
                         clearInterval(contractInterval);
                         handleContractExpired();
                         return;
                     }
-
-                    const remainingSeconds = Math.floor(remainingMs / 1000);
-                    const countdownText = `${remainingSeconds} detik`;
-
-                    // ✅ UPDATE SEMUA BARIS DI TABLE
-                    const rows = document.querySelectorAll('#activation-table tbody tr');
-                    rows.forEach(row => {
-                        const lastCell = row.cells[row.cells.length - 1];
-                        lastCell.textContent = countdownText;
-                    });
-
-                    console.log("Countdown:", remainingSeconds); // ✅ DEBUG
-                }, 1000); // ✅ UPDATE TIAP DETIK — INI YANG PENTING!
+                    
+                }, 1000); // ✅ EXACTLY 1000ms = 1 second interval
             }
 
+            // ✅ NEW FUNCTION: Update specific contract row in table
+            function updateContractRow(remainingSeconds) {
+                if (currentContractRowId) {
+                    const row = document.getElementById(currentContractRowId);
+                    if (row) {
+                        const lastCell = row.cells[row.cells.length - 1];
+                        lastCell.textContent = `${remainingSeconds.toLocaleString()} detik`;
+                        
+                        // Color coding for urgency
+                        if (remainingSeconds < 3600) { // Less than 1 hour
+                            lastCell.style.color = '#ff4444';
+                            lastCell.style.fontWeight = 'bold';
+                        } else if (remainingSeconds < 86400) { // Less than 1 day
+                            lastCell.style.color = '#ff8800';
+                        } else {
+                            lastCell.style.color = '#ffffff';
+                        }
+                    }
+                }
+            }
+
+            // ✅ Contract expiration handler
             function handleContractExpired() {
                 stopValidation("Kontrak masa aktif telah habis. Silakan perpanjang kontrak.");
                 powerBtn.classList.remove('on');
@@ -937,13 +995,14 @@
                 powerBtn.textContent = "⚫";
                 isMining = false;
 
-                const rows = document.querySelectorAll('#activation-table tbody tr');
-                rows.forEach(row => {
-                    const lastCell = row.cells[row.cells.length - 1];
-                    lastCell.textContent = "0 detik";
-                });
+                // Update contract row to show 0
+                updateContractRow(0);
+                
+                addLog("KONTRAK BERAKHIR! Mining dihentikan otomatis.", "ALERT");
+                alert("Kontrak 40 juta detik telah berakhir! Mining dihentikan otomatis.");
             }
 
+            // ✅ History functions
             function addHistoryRow(claimedAmount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -963,14 +1022,17 @@
                 document.getElementById('history-table').prepend(row);
             }
 
+            // ✅ UPDATED: Add activation row with unique ID for tracking
             function addActivationRow(amount) {
                 const now = new Date();
                 const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                 
-                const initialCountdown = `${config.contractSeconds} detik`;
+                const rowId = `contract-row-${Date.now()}`;
+                const initialCountdown = `${config.contractSeconds.toLocaleString()} detik`;
 
                 const row = document.createElement('tr');
+                row.id = rowId;
                 row.innerHTML = `
                     <td>${days[now.getDay()]}</td>
                     <td>${now.getDate()}</td>
@@ -983,7 +1045,8 @@
                     <td>${initialCountdown}</td>
                 `;
 
-                document.getElementById('activation-table').prepend(row);
+                document.querySelector('#activation-table tbody').prepend(row);
+                return rowId; // Return the row ID for tracking
             }
 
             function addConvertHistory(amount, usdtAmount) {
@@ -1004,7 +1067,7 @@
                     <td>Sukses ✅</td>
                 `;
 
-                document.getElementById('convert-table').prepend(row);
+                document.querySelector('#convert-table tbody').prepend(row);
             }
 
             // Convert to USDT
@@ -1022,7 +1085,7 @@
                 }
             });
 
-            // Jam 06:00
+            // ✅ Daily stop countdown (unchanged)
             function startCountdown() {
                 clearInterval(countdownInterval);
 
@@ -1053,12 +1116,13 @@
                 }, 1000);
             }
 
-            // Hentikan validasi
+            // ✅ Stop validation function
             function stopValidation(reason = "Sistem dimatikan") {
                 clearInterval(rewardInterval);
                 clearInterval(logInterval);
                 clearInterval(autoclaimInterval);
                 clearInterval(countdownInterval);
+                // ✅ DON'T clear contract interval here - let it continue running!
 
                 addLog(`${reason}`, "ALERT");
 
@@ -1066,7 +1130,11 @@
                 totalReward = 0;
                 document.getElementById('validasi-running').textContent = "0.000000000 BossX";
                 document.getElementById('reward-countdown').textContent = "Auto-claim in: --";
+                updateDebugInfo();
             }
+
+            // ✅ Initialize debug display
+            updateDebugInfo();
         });
     </script>
 </body>
